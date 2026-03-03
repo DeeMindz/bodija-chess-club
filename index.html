@@ -1,0 +1,556 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bodija Chess Club - Rating Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <!-- Sidebar Backdrop (for mobile) -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <!-- Sidebar Close Button -->
+        <button class="sidebar-close" onclick="closeSidebar()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+        </button>
+        <div class="sidebar-header">
+            <img src="images/BCC logo.png" alt="BCC Logo" class="logo-icon">
+            <div>
+                <div class="logo-text">Bodija Chess</div>
+                <div class="logo-subtitle">Club</div>
+            </div>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-item active" data-section="dashboard">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                </svg>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" data-section="leaderboard">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                    </path>
+                </svg>
+                <span>Leaderboard</span>
+            </div>
+            <div class="nav-item" data-section="players">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span>Players</span>
+            </div>
+            <div class="nav-item" data-section="games">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 8v4l3 3"></path>
+                    <circle cx="12" cy="12" r="10"></circle>
+                </svg>
+                <span>Games Log</span>
+            </div>
+            <div class="nav-item" data-section="tournaments">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path>
+                    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                </svg>
+                <span>Tournaments</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section class="section active" id="dashboard">
+            <div class="page-header">
+                <h1 class="page-title">Dashboard</h1>
+            </div>
+            <div class="page-content">
+                <div class="dashboard-grid">
+                    <div class="podium-container">
+                        <h3 class="podium-title">🏆 Top Players</h3>
+                        <div class="podium" id="podium">
+                            <!-- Podium will be rendered here -->
+                        </div>
+                    </div>
+                    <div class="stats-container">
+                        <h3 class="stats-title">Club Statistics</h3>
+                        <div class="stat-item">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="var(--accent-gold)" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" style="opacity: 0.8;">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span class="stat-label">Total Members</span>
+                            </div>
+                            <span class="stat-value" id="totalMembers">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" style="opacity: 0.8;">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M12 8v4l3 3"></path>
+                                </svg>
+                                <span class="stat-label">Games Played</span>
+                            </div>
+                            <span class="stat-value" id="totalGames">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" style="opacity: 0.8;">
+                                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                                    <path d="M4 22h16"></path>
+                                </svg>
+                                <span class="stat-label">Active Tournaments</span>
+                            </div>
+                            <span class="stat-value" id="activeTournaments">0</span>
+                        </div>
+                    </div>
+                    <div class="recent-games-container">
+                        <h3 class="recent-games-title">Recent Games</h3>
+                        <div id="recentGames">
+                            <!-- Recent games will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section class="section" id="leaderboard">
+            <div class="page-header">
+                <h1 class="page-title">Leaderboard</h1>
+            </div>
+            <div class="page-content">
+                <div class="leaderboard-controls">
+                    <div class="search-box">
+                        <input type="text" id="leaderboardSearch" placeholder="Search players...">
+                    </div>
+                </div>
+                <div class="leaderboard-table">
+                    <div class="table-header">
+                        <div class="table-header-item" onclick="sortLeaderboard('rank')">#</div>
+                        <div class="table-header-item" onclick="sortLeaderboard('name')">Player</div>
+                        <div class="table-header-item">Form</div>
+                        <div class="table-header-item" onclick="sortLeaderboard('rating')">Rating</div>
+                        <div class="table-header-item mobile-hide" onclick="sortLeaderboard('peakRating')">Peak</div>
+                        <div class="table-header-item mobile-hide" onclick="sortLeaderboard('games')">Games</div>
+                        <div class="table-header-item">W-D-L</div>
+                        <div class="table-header-item">Win%</div>
+                        <div class="table-header-item mobile-hide" onclick="sortLeaderboard('status')">Status</div>
+                    </div>
+                    <div id="leaderboardBody">
+                        <!-- Leaderboard rows will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Players Section -->
+        <section class="section" id="players">
+            <div class="page-header">
+                <h1 class="page-title">Players</h1>
+            </div>
+            <div class="page-content">
+                <div class="players-grid" id="playersGrid">
+                    <!-- Player cards will be rendered here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Games Log Section -->
+        <section class="section" id="games">
+            <div class="page-header">
+                <h1 class="page-title">Games Log</h1>
+            </div>
+            <div class="page-content">
+                <div class="games-log-controls">
+                    <div class="filter-box">
+                        <select id="tournamentFilter">
+                            <option value="">All Tournaments</option>
+                        </select>
+                    </div>
+                    <button class="add-game-btn" onclick="openAddGameModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14m-7-7h14"></path>
+                        </svg>
+                        Add Game
+                    </button>
+                </div>
+                <div class="games-table">
+                    <div class="table-header">
+                        <div class="table-header-item mobile-hide">#</div>
+                        <div class="table-header-item">Date</div>
+                        <div class="table-header-item">White</div>
+                        <div class="table-header-item" style="text-align: center;">Result</div>
+                        <div class="table-header-item">Black</div>
+                        <div class="table-header-item mobile-hide">Tournament</div>
+                        <div class="table-header-item mobile-hide">W +/-</div>
+                        <div class="table-header-item mobile-hide">B +/-</div>
+                        <div class="table-header-item"></div>
+                    </div>
+                    <div id="gamesBody">
+                        <!-- Games will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tournaments Section -->
+        <section class="section" id="tournaments">
+            <div class="page-header">
+                <h1 class="page-title">Tournaments</h1>
+            </div>
+            <div class="page-content">
+                <div class="games-log-controls">
+                    <div class="filter-box">
+                        <select id="tournamentStatusFilter">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                    <div class="filter-box">
+                        <select id="tournamentFormatFilter">
+                            <option value="">All Formats</option>
+                            <option value="swiss">Swiss System</option>
+                            <option value="roundrobin">Round Robin</option>
+                            <option value="knockout">Knockout</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="tournamentsGrid">
+                    <!-- Tournament cards content will be rendered here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Game Confirmation Modal -->
+    <div class="modal-overlay" id="gameConfirmModal">
+        <div class="modal game-confirm-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirm Result</h2>
+            </div>
+            <div class="matchup-section">
+                <span class="player-name" id="confirmWhiteName">-</span>
+                <span class="vs-divider">vs</span>
+                <span class="player-name" id="confirmBlackName">-</span>
+            </div>
+            <div class="result-section">
+                <span class="result-score" id="confirmResult">-</span>
+                <span class="result-outcome" id="confirmOutcome">-</span>
+            </div>
+            <div class="confirm-buttons">
+                <button type="button" class="btn-secondary" onclick="cancelGameConfirm()">Cancel</button>
+                <button type="button" class="confirm-btn" onclick="confirmGameSubmit()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournament Round Confirmation Modal -->
+    <div class="modal-overlay" id="roundConfirmModal">
+        <div class="modal round-confirm-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirm Round Results</h2>
+            </div>
+            <div id="roundConfirmList" class="round-confirm-list"></div>
+            <div class="confirm-buttons">
+                <button type="button" class="btn-secondary" onclick="closeRoundConfirm()">Back</button>
+                <button type="button" class="confirm-btn" onclick="confirmRoundSubmit()">Submit All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Game Modal -->
+    <div class="modal-overlay" id="addGameModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Game</h2>
+                <button class="modal-close" onclick="closeAddGameModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <form id="addGameForm" onsubmit="submitGame(event)">
+                <div class="form-row">
+                    <div class="form-group game-date-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input game-date-input" id="gameDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tournament (optional)</label>
+                        <input type="text" class="form-input" id="gameTournament" placeholder="Tournament name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">White Player</label>
+                    <select class="form-select" id="whitePlayer" required>
+                        <option value="">Select White Player</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Black Player</label>
+                    <select class="form-select" id="blackPlayer" required>
+                        <option value="">Select Black Player</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Result</label>
+                    <select class="form-select" id="gameResult" required>
+                        <option value="">Select Result</option>
+                        <option value="1-0">1-0 (White Wins)</option>
+                        <option value="0.5-0.5">??-?? (Draw)</option>
+                        <option value="0-1">0-1 (Black Wins)</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Record Game</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Player Detail Modal -->
+    <div class="modal-overlay" id="playerDetailModal">
+        <div class="modal player-detail-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Player Details</h2>
+                <button class="modal-close" onclick="closePlayerDetailModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="playerDetailContent">
+                <!-- Player detail content will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Detail Modal -->
+    <div class="modal-overlay" id="gameDetailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Game Details</h2>
+                <button class="modal-close" onclick="closeGameDetailModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="gameDetailContent">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournament Creation Modal -->
+    <div class="modal-overlay" id="createTournamentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Create New Tournament</h2>
+                <button class="modal-close" onclick="closeCreateTournamentModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <form id="createTournamentForm" onsubmit="submitTournament(event)">
+                <input type="hidden" id="editTournamentId" value="">
+                <div class="form-group">
+                    <label class="form-label">Tournament Name</label>
+                    <input type="text" class="form-input" id="tournamentName" placeholder="e.g., BCC Monthly April 2026"
+                        required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group tournament-date-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input tournament-date-input" id="tournamentDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Time Control</label>
+                        <select class="form-select" id="tournamentTimeControl">
+                            <option value="Classical (90+30)">Classical (90+30)</option>
+                            <option value="Rapid (25+0)">Rapid (25+0)</option>
+                            <option value="Rapid (15+10)">Rapid (15+10)</option>
+                            <option value="Rapid (10+5)">Rapid (10+5)</option>
+                            <option value="Rapid (10+0)">Rapid (10+0)</option>
+                            <option value="Blitz (5+3)">Blitz (5+3)</option>
+                            <option value="Blitz (5+0)">Blitz (5+0)</option>
+                            <option value="Blitz (3+2)">Blitz (3+2)</option>
+                            <option value="Bullet (1+0)">Bullet (1+0)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Format
+                            <div class="info-container">
+                                <span class="info-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                    </svg>
+                                </span>
+                                <div class="info-tooltip">
+                                    <h4>Tournament Formats</h4>
+                                    <ul>
+                                        <li><strong>Swiss:</strong> Players with similar scores paired. No elimination.
+                                        </li>
+                                        <li><strong>Round Robin:</strong> Everyone plays everyone once.</li>
+                                        <li><strong>Knockout:</strong> Losers eliminated until one winner remains.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </label>
+                        <select class="form-select" id="tournamentFormat" onchange="updateRoundsInput()">
+                            <option value="swiss">Swiss System</option>
+                            <option value="roundrobin">Round Robin</option>
+                            <option value="knockout">Knockout</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Number of Rounds</label>
+                        <input type="number" class="form-input" id="tournamentRounds" value="5" min="1" max="15">
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="tournamentSubmitBtn">Create Tournament</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tournament Start Preview Modal -->
+    <div class="modal-overlay" id="tournamentStartPreviewModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirm Tournament Start</h2>
+                <button class="modal-close" onclick="closeTournamentStartPreviewModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="preview-content">
+                <div class="preview-card">
+                    <h3 id="startPreviewTournamentName" style="margin-bottom: 15px; color: var(--primary);"></h3>
+                    <div class="preview-details">
+                        <div class="preview-row">
+                            <span class="preview-label">Date:</span>
+                            <span id="startPreviewTournamentDate" class="preview-value"></span>
+                        </div>
+                        <div class="preview-row">
+                            <span class="preview-label">Time Control:</span>
+                            <span id="startPreviewTournamentTimeControl" class="preview-value"></span>
+                        </div>
+                        <div class="preview-row">
+                            <span class="preview-label">Format:</span>
+                            <span id="startPreviewTournamentFormat" class="preview-value"></span>
+                        </div>
+                        <div class="preview-row">
+                            <span class="preview-label">Rounds:</span>
+                            <span id="startPreviewTournamentRounds" class="preview-value"></span>
+                        </div>
+                    </div>
+                    <div class="preview-players-section"
+                        style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
+                        <h4 style="margin-bottom: 10px; color: var(--text-secondary); font-size: 14px;">Players (<span
+                                id="startPreviewPlayerCount">0</span>)</h4>
+                        <div id="startPreviewPlayersList" class="preview-players-grid"
+                            style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 200px; overflow-y: auto;">
+                            <!-- Players will be listed here -->
+                        </div>
+                    </div>
+                </div>
+                <p style="margin-top: 15px; color: var(--text-secondary); font-size: 14px;">
+                    Click "Start Tournament" to begin. The tournament will be saved to the database and pairings will be
+                    generated.
+                </p>
+                <div class="preview-actions">
+                    <button class="btn-secondary" onclick="closeTournamentStartPreviewModal(true)">Go Back</button>
+                    <button class="submit-btn" onclick="confirmStartTournament()">Confirm & Start</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Selection Modal -->
+    <div class="modal-overlay" id="playerSelectionModal">
+        <div class="modal" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2 class="modal-title">Select Players</h2>
+                <button class="modal-close" onclick="closePlayerSelectionModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="playerSelectionContent">
+                <!-- Player selection content will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./lib/main.js"></script>
+</body>
+
+</html>
