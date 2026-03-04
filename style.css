@@ -2747,74 +2747,94 @@ input[type="date"].form-input {
     }
 }
 
-/* Mobile Optimization for Pairings */
+/* Mobile Optimization for Pairings - Kept as Row */
 @media (max-width: 768px) {
     .pairing-card {
-        grid-template-columns: 1fr !important;
-        text-align: center !important;
-        gap: 12px !important;
+        grid-template-columns: 1.2fr auto 1.2fr auto !important;
+        gap: 8px !important;
+        padding: 12px 8px !important;
+        font-size: 13px;
     }
 
-    .pairing-player.white {
-        text-align: center !important;
+    .pairing-player h4 {
+        font-size: 13px !important;
+        margin-bottom: 2px !important;
+    }
+
+    .pairing-player .rating {
+        font-size: 10px !important;
     }
 
     .pairing-vs {
-        font-size: 12px;
-        opacity: 0.5;
+        font-size: 10px !important;
     }
 
     .pairing-result select {
-        width: 100% !important;
-    }
-
-    .round-actions-sticky {
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        border-radius: 0 !important;
-        border-left: none !important;
-        border-right: none !important;
-        border-bottom: none !important;
-        padding: 12px 20px !important;
-        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    .tournament-detail-view {
-        padding-bottom: 80px !important;
-        /* Space for sticky button */
-    }
-
-    /* Standings Mobile Optimization */
-    .standings-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin: 0 -16px;
-        padding: 0 16px;
-    }
-
-    .standings-table {
-        min-width: 450px;
+        padding: 6px 4px !important;
         font-size: 12px !important;
     }
+}
 
-    .standings-header,
-    .standings-row {
-        display: grid !important;
-        grid-template-columns: 30px 1fr 45px 30px 30px 30px 50px !important;
-        gap: 8px !important;
-        padding: 10px 8px !important;
-    }
+.pairing-player.white {
+    text-align: center !important;
+}
 
-    .col-buchholz {
-        display: none !important;
-    }
+.pairing-vs {
+    font-size: 12px;
+    opacity: 0.5;
+}
 
-    .standings-header span {
-        font-size: 11px !important;
-        text-transform: uppercase;
-    }
+.pairing-result select {
+    width: 100% !important;
+}
+
+.round-actions-sticky {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    padding: 12px 20px !important;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tournament-detail-view {
+    padding-bottom: 80px !important;
+    /* Space for sticky button */
+}
+
+/* Standings Mobile Optimization */
+.standings-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    padding: 0 16px;
+}
+
+.standings-table {
+    min-width: 450px;
+    font-size: 12px !important;
+}
+
+.standings-header,
+.standings-row {
+    display: grid !important;
+    grid-template-columns: 30px 1fr 45px 30px 30px 30px 50px !important;
+    gap: 8px !important;
+    padding: 10px 8px !important;
+}
+
+.col-buchholz {
+    display: none !important;
+}
+
+.standings-header span {
+    font-size: 11px !important;
+    text-transform: uppercase;
+}
 }
 
 /* Standings Desktop Layout */
