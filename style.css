@@ -2849,3 +2849,52 @@ input[type="date"].form-input {
 .standings-row:last-child {
     border-bottom: none;
 }
+
+.round-pills:last-child {
+    border-bottom: none;
+}
+
+/* Round Navigation Pills */
+.round-nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    padding: 5px 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.round-pill {
+    padding: 8px 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.round-pill:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
+}
+
+.round-pill.active {
+    background: var(--accent-gold);
+    border-color: var(--accent-gold);
+    color: #000;
+}
+
+.round-pill.completed {
+    border-color: var(--success);
+}
+
+.round-pill .check-icon {
+    font-size: 12px;
+}
