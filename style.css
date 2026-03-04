@@ -2857,18 +2857,27 @@ input[type="date"].form-input {
 /* Round Navigation Pills */
 .round-nav {
     display: flex;
-    gap: 10px;
+    gap: 20px;
     margin-bottom: 25px;
-    padding: 5px 0;
+    padding: 10px 0;
     overflow-x: auto;
-    scrollbar-width: thin;
+    scrollbar-width: none;
+    /* Hide scrollbar for cleaner look */
+    -ms-overflow-style: none;
+    border-bottom: 1px solid var(--border-color);
+    width: 100%;
+}
+
+.round-nav::-webkit-scrollbar {
+    display: none;
 }
 
 .round-pill {
-    padding: 8px 16px;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
+    padding: 8px 0;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
     color: var(--text-secondary);
     font-size: 14px;
     font-weight: 600;
@@ -2878,21 +2887,16 @@ input[type="date"].form-input {
     display: flex;
     align-items: center;
     gap: 6px;
+    position: relative;
 }
 
 .round-pill:hover {
-    background: var(--border-color);
     color: var(--text-primary);
 }
 
 .round-pill.active {
-    background: var(--accent-gold);
-    border-color: var(--accent-gold);
-    color: #000;
-}
-
-.round-pill.completed {
-    border-color: var(--success);
+    color: var(--accent-gold);
+    border-bottom-color: var(--accent-gold);
 }
 
 .round-pill .check-icon {
