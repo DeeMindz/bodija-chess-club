@@ -252,13 +252,11 @@
             </div>
             <div class="page-content">
                 <div class="games-log-controls">
-                    <div class="filter-box">
-                        <select id="tournamentStatusFilter">
-                            <option value="">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="completed">Completed</option>
-                            <option value="draft">Draft</option>
-                        </select>
+                    <div class="round-nav" id="tournamentStatusTabs" style="margin-bottom: 0;">
+                        <div class="round-pill active" data-status="">All Status</div>
+                        <div class="round-pill" data-status="active">Ongoing</div>
+                        <div class="round-pill" data-status="completed">Completed</div>
+                        <div class="round-pill" data-status="draft">Upcoming</div>
                     </div>
                     <div class="filter-box">
                         <select id="tournamentFormatFilter">
