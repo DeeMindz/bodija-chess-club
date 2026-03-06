@@ -215,6 +215,11 @@ body {
     position: sticky;
     top: 0;
     z-index: var(--z-sticky);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 .page-title {
