@@ -3014,7 +3014,23 @@ input[type="date"].form-input {
     min-height: 20px;
 }
 
-/* Admin-only class for hiding elements */
+/* Admin-only class for hiding elements - hidden by default, shown when isAdmin=true */
 .admin-only {
-    display: none;
+    display: none !important;
+}
+
+/* Show admin elements when body has admin class */
+body.is-admin .admin-only {
+    display: flex !important;
+}
+
+/* Player Request Success */
+.player-request-success {
+    color: #22c55e;
+    font-size: 14px;
+    text-align: center;
+    padding: 12px;
+    background: rgba(34, 197, 94, 0.1);
+    border-radius: 8px;
+    margin-top: 10px;
 }
