@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -135,12 +135,23 @@
         <!-- Dashboard Section -->
         <section class="section active" id="dashboard">
             <div class="page-header">
-                <h1 class="page-title">Dashboard</h1>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <h1 class="page-title">Dashboard</h1>
+                    <button class="admin-notification-btn admin-bell" style="display: none;"
+                        onclick="openPlayerRequestsModal()" title="Pending Requests">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge notification-count" style="display: none;">0</span>
+                    </button>
+                </div>
             </div>
             <div class="page-content">
                 <div class="dashboard-grid">
                     <div class="podium-container">
-                        <h3 class="podium-title">🏆 Top Players</h3>
+                        <h3 class="podium-title">?? Top Players</h3>
                         <div class="podium" id="podium">
                             <!-- Podium will be rendered here -->
                         </div>
@@ -201,7 +212,18 @@
         <!-- Leaderboard Section -->
         <section class="section" id="leaderboard">
             <div class="page-header">
-                <h1 class="page-title">Leaderboard</h1>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <h1 class="page-title">Leaderboard</h1>
+                    <button class="admin-notification-btn admin-bell" style="display: none;"
+                        onclick="openPlayerRequestsModal()" title="Pending Requests">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge notification-count" style="display: none;">0</span>
+                    </button>
+                </div>
             </div>
             <div class="page-content">
                 <div class="leaderboard-controls">
@@ -234,14 +256,14 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <h1 class="page-title">Players</h1>
                     <!-- Notification bell for admin -->
-                    <button id="adminNotificationBtn" class="admin-notification-btn" style="display: none;"
+                    <button class="admin-notification-btn admin-bell" style="display: none;"
                         onclick="openPlayerRequestsModal()" title="Pending Requests">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                         </svg>
-                        <span id="notificationBadge" class="notification-badge" style="display: none;">0</span>
+                        <span class="notification-badge notification-count" style="display: none;">0</span>
                     </button>
                 </div>
             </div>
@@ -275,7 +297,18 @@
         <!-- Games Log Section -->
         <section class="section" id="games">
             <div class="page-header">
-                <h1 class="page-title">Games Log</h1>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <h1 class="page-title">Games Log</h1>
+                    <button class="admin-notification-btn admin-bell" style="display: none;"
+                        onclick="openPlayerRequestsModal()" title="Pending Requests">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge notification-count" style="display: none;">0</span>
+                    </button>
+                </div>
             </div>
             <div class="page-content">
                 <div class="games-log-controls" style="flex-wrap: nowrap;">
@@ -341,7 +374,7 @@
                 <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <h2 class="modal-title" style="margin: 0;">Head-to-Head</h2>
                     <button onclick="closeH2HModal()"
-                        style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 22px; padding: 4px;">✕</button>
+                        style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 22px; padding: 4px;">?</button>
                 </div>
                 <div id="h2hContent">
                     <!-- H2H content rendered here -->
@@ -353,7 +386,18 @@
         <!-- Tournaments Section -->
         <section class="section" id="tournaments">
             <div class="page-header">
-                <h1 class="page-title">Tournaments</h1>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <h1 class="page-title">Tournaments</h1>
+                    <button class="admin-notification-btn admin-bell" style="display: none;"
+                        onclick="openPlayerRequestsModal()" title="Pending Requests">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge notification-count" style="display: none;">0</span>
+                    </button>
+                </div>
             </div>
             <div class="page-content">
                 <div class="games-log-controls">
@@ -468,7 +512,7 @@
                     <select class="form-select" id="gameResult" required>
                         <option value="">Select Result</option>
                         <option value="1-0">1-0 (White Wins)</option>
-                        <option value="0.5-0.5">½-½ (Draw)</option>
+                        <option value="0.5-0.5">�-� (Draw)</option>
                         <option value="0-1">0-1 (Black Wins)</option>
                     </select>
                 </div>
@@ -826,7 +870,7 @@
                     <input type="tel" class="form-input" id="playerRequestPhone" placeholder="Your phone number">
                 </div>
                 <div class="player-request-success" id="playerRequestSuccess" style="display: none;">
-                    ✓ Your request has been submitted! We'll contact you soon.
+                    ? Your request has been submitted! We'll contact you soon.
                 </div>
                 <div class="player-request-error" id="playerRequestError"
                     style="display: none; color: #ef4444; font-size: 13px; margin-top: 8px; text-align: center;"></div>
