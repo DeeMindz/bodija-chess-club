@@ -2552,6 +2552,41 @@ input[type="date"].form-input {
     .mobile-only-h2h {
         display: inline-flex !important;
     }
+
+    /* Make tournament format filter narrower on mobile */
+    #tournamentFormatFilter {
+        min-width: 100px !important;
+        max-width: 120px !important;
+        font-size: 12px !important;
+        padding: 6px 8px !important;
+    }
+
+    /* Make player action buttons more compact on mobile */
+    #players .page-content>div:first-of-type {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    #players .page-content>div:first-of-type .add-game-btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    #players .page-content>div:first-of-type .add-game-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* Make tournament action button more compact on mobile */
+    #tournaments .games-log-controls .add-game-btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    #tournaments .games-log-controls .add-game-btn svg {
+        width: 14px;
+        height: 14px;
+    }
 }
 
 /* Typography Controls */
