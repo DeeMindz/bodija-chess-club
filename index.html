@@ -55,16 +55,6 @@
                 <div class="logo-text">Bodija Chess</div>
                 <div class="logo-subtitle">Club</div>
             </div>
-            <!-- Notification bell for admin -->
-            <button id="adminNotificationBtn" class="admin-notification-btn" style="display: none;"
-                onclick="openPlayerRequestsModal()" title="Pending Requests">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                </svg>
-                <span id="notificationBadge" class="notification-badge" style="display: none;">0</span>
-            </button>
         </div>
         <div class="nav-menu">
             <div class="nav-item active" data-section="dashboard">
@@ -242,6 +232,17 @@
         <section class="section" id="players">
             <div class="page-header">
                 <h1 class="page-title">Players</h1>
+                <!-- Notification bell for admin -->
+                <button id="adminNotificationBtn" class="admin-notification-btn"
+                    style="display: none; margin-left: auto;" onclick="openPlayerRequestsModal()"
+                    title="Pending Requests">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span id="notificationBadge" class="notification-badge" style="display: none;">0</span>
+                </button>
             </div>
             <div class="page-content">
                 <div style="display: flex; gap: 10px; margin-bottom: 16px;">
@@ -761,6 +762,20 @@
                     </svg>
                 </button>
             </div>
+            <div class="player-requests-bulk-actions" id="playerRequestsBulkActions"
+                style="display: none; padding: 10px 16px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="selectAllRequests" onchange="toggleSelectAllRequests()"
+                        style="width: 18px; height: 18px;">
+                    <span>Select All</span>
+                </label>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn-approve" onclick="bulkApproveRequests()"
+                        style="padding: 6px 12px; font-size: 12px;">Approve Selected</button>
+                    <button type="button" class="btn-reject" onclick="bulkRejectRequests()"
+                        style="padding: 6px 12px; font-size: 12px;">Reject Selected</button>
+                </div>
+            </div>
             <div id="playerRequestsList" class="player-requests-list">
                 <!-- Pending requests will be rendered here -->
             </div>
@@ -792,8 +807,8 @@
                         </svg>
                         <span>Tap to add photo</span>
                     </div>
-                    <input type="file" id="playerPhoto" accept="image/*" capture="environment" style="display: none;"
-                        onchange="previewPlayerPhoto(event)">
+                    <input type="file" id="playerPhoto" accept="image/*" capture="environment" required
+                        style="display: none;" onchange="previewPlayerPhoto(event)">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Your Name *</label>

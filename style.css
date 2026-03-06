@@ -2296,6 +2296,20 @@ input[type="date"].form-input {
     color: var(--bg-primary);
 }
 
+.player-detail-avatar-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent-gold);
+}
+
+.player-detail-avatar-container {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
 .player-detail-info h2 {
     font-size: 24px;
     font-weight: 700;
@@ -3179,6 +3193,18 @@ body.is-admin .admin-only {
     gap: 16px;
 }
 
+.player-request-checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.player-request-checkbox input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--accent-gold);
+}
+
 .player-request-info {
     display: flex;
     align-items: center;
@@ -3268,4 +3294,4 @@ body.is-admin .admin-only {
 
 .btn-reject:hover {
     background: rgba(239, 68, 68, 0.25);
-} 
+}
