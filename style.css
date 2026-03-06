@@ -1657,15 +1657,15 @@ input[type="date"]::-moz-calendar-picker-indicator {
 
 .player-selection-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--space-md);
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
 }
 
 .player-select-card {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
-    padding: var(--space-md);
+    gap: 8px;
+    padding: 8px 12px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 8px;
