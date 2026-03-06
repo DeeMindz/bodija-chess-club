@@ -12,6 +12,18 @@
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="./style.css">
+    <!-- Immediate section restoration to prevent flash -->
+    <script>
+        (function () {
+            var saved = sessionStorage.getItem('bcc_active_section');
+            if (saved && saved !== 'dashboard') {
+                var dash = document.getElementById('dashboard');
+                var target = document.getElementById(saved);
+                if (dash) dash.classList.remove('active');
+                if (target) target.classList.add('active');
+            }
+        })();
+    </script>
 </head>
 
 <body>
