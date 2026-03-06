@@ -686,15 +686,17 @@
                 </div>
 
                 <!-- Login method toggle -->
-                <div class="login-method-toggle" style="display: flex; gap: 10px; margin: 12px 0;">
-                    <button type="button" class="btn-toggle active" id="otpToggle" onclick="switchLoginMethod('otp')"
-                        style="flex: 1; padding: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary); border-radius: 6px; cursor: pointer; font-size: 13px;">
+                <div class="login-method-toggle"
+                    style="display: flex; justify-content: center; gap: 15px; margin: 12px 0; font-size: 13px;">
+                    <span id="otpToggle" onclick="switchLoginMethod('otp')"
+                        style="cursor: pointer; color: var(--text-secondary); text-decoration: underline;">
                         OTP Code
-                    </button>
-                    <button type="button" class="btn-toggle" id="passwordToggle" onclick="switchLoginMethod('password')"
-                        style="flex: 1; padding: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary); border-radius: 6px; cursor: pointer; font-size: 13px;">
+                    </span>
+                    <span style="color: var(--text-secondary);">|</span>
+                    <span id="passwordToggle" onclick="switchLoginMethod('password')"
+                        style="cursor: pointer; color: var(--accent-gold);">
                         Password
-                    </button>
+                    </span>
                 </div>
 
                 <!-- OTP Section -->
