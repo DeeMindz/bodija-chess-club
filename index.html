@@ -29,6 +29,14 @@
 </head>
 
 <body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen"
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0D1117; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.3s;">
+        <img src="images/BCC logo.png" alt="BCC Logo" style="width: 120px; height: 120px; margin-bottom: 24px;">
+        <div style="color: #F0A500; font-size: 24px; font-weight: 700; margin-bottom: 8px;">Bodija Chess Club</div>
+        <div style="color: #8b949e; font-size: 14px;">Loading...</div>
+    </div>
+
     <!-- Sidebar Backdrop (for mobile) -->
     <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
@@ -823,7 +831,7 @@
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                     <input type="checkbox" id="selectAllRequests" onchange="toggleSelectAllRequests()"
                         style="width: 18px; height: 18px;">
-                    <span>Select All</span>
+                    <span>All</span>
                 </label>
                 <div style="display: flex; gap: 8px;">
                     <button type="button" class="btn-approve" onclick="bulkApproveRequests()"
