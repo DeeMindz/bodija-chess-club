@@ -681,6 +681,20 @@
                     <label class="form-label">Email</label>
                     <input type="email" class="form-input" id="adminEmail" placeholder="admin@example.com" required>
                 </div>
+
+                <!-- Login method toggle -->
+                <div class="login-method-toggle" style="display: flex; gap: 10px; margin: 12px 0;">
+                    <button type="button" class="btn-toggle active" id="otpToggle" onclick="switchLoginMethod('otp')"
+                        style="flex: 1; padding: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary); border-radius: 6px; cursor: pointer; font-size: 13px;">
+                        OTP Code
+                    </button>
+                    <button type="button" class="btn-toggle" id="passwordToggle" onclick="switchLoginMethod('password')"
+                        style="flex: 1; padding: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary); border-radius: 6px; cursor: pointer; font-size: 13px;">
+                        Password
+                    </button>
+                </div>
+
+                <!-- OTP Section -->
                 <div id="otpSection" style="display: none;">
                     <div class="form-group">
                         <label class="form-label">Enter OTP Code</label>
@@ -690,9 +704,20 @@
                     <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;"
                         onclick="verifyOTPAndLogin(event)">Verify & Login</button>
                 </div>
+
+                <!-- Password Section -->
+                <div id="passwordSection" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="adminPassword" placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;"
+                        onclick="loginWithPassword(event)">Login with Password</button>
+                </div>
+
                 <div class="admin-login-error" id="adminLoginError"></div>
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;" id="sendOtpBtn">Send
-                    OTP</button>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;" id="sendOtpBtn"
+                    onclick="sendOTP(event)">Send OTP Code</button>
             </form>
         </div>
     </div>
