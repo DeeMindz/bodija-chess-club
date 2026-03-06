@@ -921,7 +921,7 @@ body {
 }
 
 .add-game-btn {
-    padding: var(--space-sm) var(--space-lg);
+    padding: 6px 14px;
     background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dim));
     border: none;
     border-radius: 8px;
@@ -934,7 +934,7 @@ body {
     align-items: center;
     gap: var(--space-xs);
     font-family: 'Outfit', sans-serif;
-    min-height: 44px;
+    min-height: 38px;
 }
 
 .add-game-btn:hover {
