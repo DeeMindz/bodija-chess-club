@@ -871,8 +871,31 @@
                         </svg>
                         <span>Tap to add photo</span>
                     </div>
-                    <input type="file" id="playerPhoto" accept="image/*" capture="environment" required
-                        style="display: none;" onchange="previewPlayerPhoto(event)">
+                    <!-- Hidden file input for camera/gallery selection -->
+                    <input type="file" id="playerPhoto" accept="image/*" style="display: none;"
+                        onchange="previewPlayerPhoto(event)">
+                    <!-- Camera button -->
+                    <button type="button" class="btn-camera" onclick="openCamera()"
+                        style="margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" />
+                            <circle cx="12" cy="10" r="3" />
+                            <path d="M2 20h20" />
+                        </svg>
+                        Take Photo
+                    </button>
+                    <!-- Gallery button -->
+                    <button type="button" class="btn-gallery" onclick="document.getElementById('playerPhoto').click()"
+                        style="margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <path d="m21 15-5-5L5 21" />
+                        </svg>
+                        Choose from Gallery
+                    </button>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Your Name *</label>

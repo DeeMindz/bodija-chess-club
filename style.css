@@ -3405,3 +3405,47 @@ body.is-admin .admin-only {
 .btn-reject:hover {
     background: rgba(239, 68, 68, 0.25);
 }
+
+/* Loading Modal */
+.loading-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.loading-modal-content {
+    background: var(--bg-secondary);
+    padding: 32px 48px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--accent-gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#loadingModalMessage {
+    color: var(--text-primary);
+    font-size: 16px;
+    margin: 0;
+}
