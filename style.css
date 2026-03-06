@@ -2778,66 +2778,66 @@ input[type="date"].form-input {
         font-size: 12px !important;
     }
 
-.pairing-player.white {
-    text-align: center !important;
-}
+    .pairing-player.white {
+        text-align: center !important;
+    }
 
-.pairing-vs {
-    font-size: 12px;
-    opacity: 0.5;
-}
+    .pairing-vs {
+        font-size: 12px;
+        opacity: 0.5;
+    }
 
-.pairing-result select {
-    width: 100% !important;
-}
+    .pairing-result select {
+        width: 100% !important;
+    }
 
-.round-actions-sticky {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    border-radius: 0 !important;
-    border-left: none !important;
-    border-right: none !important;
-    border-bottom: none !important;
-    padding: 12px 20px !important;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
-}
+    .round-actions-sticky {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: none !important;
+        padding: 12px 20px !important;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+    }
 
-.tournament-detail-view {
-    padding-bottom: 80px !important;
-    /* Space for sticky button */
-}
+    .tournament-detail-view {
+        padding-bottom: 80px !important;
+        /* Space for sticky button */
+    }
 
-/* Standings Mobile Optimization */
-.standings-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin: 0 -16px;
-    padding: 0 16px;
-}
+    /* Standings Mobile Optimization */
+    .standings-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -16px;
+        padding: 0 16px;
+    }
 
-.standings-table {
-    min-width: 450px;
-    font-size: 12px !important;
-}
+    .standings-table {
+        min-width: 450px;
+        font-size: 12px !important;
+    }
 
-.standings-header,
-.standings-row {
-    display: grid !important;
-    grid-template-columns: 30px 1fr 45px 30px 30px 30px 50px !important;
-    gap: 8px !important;
-    padding: 10px 8px !important;
-}
+    .standings-header,
+    .standings-row {
+        display: grid !important;
+        grid-template-columns: 30px 1fr 45px 30px 30px 30px 50px !important;
+        gap: 8px !important;
+        padding: 10px 8px !important;
+    }
 
-.col-buchholz {
-    display: none !important;
-}
+    .col-buchholz {
+        display: none !important;
+    }
 
-.standings-header span {
-    font-size: 11px !important;
-    text-transform: uppercase;
-}
+    .standings-header span {
+        font-size: 11px !important;
+        text-transform: uppercase;
+    }
 }
 
 /* Standings Desktop Layout */
@@ -2942,4 +2942,79 @@ input[type="date"].form-input {
     to {
         transform: rotate(360deg);
     }
+}
+
+/* ==================== Admin Login Section ==================== */
+.admin-login-section {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.admin-email-display {
+    font-size: 11px;
+    color: var(--accent-gold);
+    text-align: center;
+    padding: 4px 8px;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-login-btn,
+.admin-logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    width: 100%;
+}
+
+.admin-login-btn {
+    background: var(--surface-elevated);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+
+.admin-login-btn:hover {
+    background: var(--border);
+    color: var(--text-primary);
+}
+
+.admin-logout-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.admin-logout-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+/* Admin Login Error */
+.admin-login-error {
+    color: #ef4444;
+    font-size: 13px;
+    margin-top: 8px;
+    text-align: center;
+    min-height: 20px;
+}
+
+/* Admin-only class for hiding elements */
+.admin-only {
+    display: none;
 }
