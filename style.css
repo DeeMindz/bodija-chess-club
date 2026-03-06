@@ -356,6 +356,35 @@ body {
     color: #000;
 }
 
+.podium-avatar-img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent-gold);
+}
+
+.podium-avatar-container {
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--space-sm);
+}
+
+.podium-avatar-container.gold .podium-avatar-img,
+.podium-avatar-container.gold {
+    border-color: #FFD700;
+}
+
+.podium-avatar-container.silver .podium-avatar-img,
+.podium-avatar-container.silver {
+    border-color: #C0C0C0;
+}
+
+.podium-avatar-container.bronze .podium-avatar-img,
+.podium-avatar-container.bronze {
+    border-color: #CD7F32;
+}
+
 .podium-name {
     font-size: 14px;
     font-weight: 600;
@@ -790,6 +819,20 @@ body {
     font-weight: 700;
     background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dim));
     color: var(--bg-primary);
+}
+
+.player-card-avatar-img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-gold);
+}
+
+.player-card-avatar-container {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
 }
 
 .player-card-info h3 {
