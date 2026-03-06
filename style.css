@@ -2543,6 +2543,10 @@ input[type="date"].form-input {
     .mobile-hide {
         display: none !important;
     }
+
+    .mobile-only-h2h {
+        display: inline-flex !important;
+    }
 }
 
 /* Typography Controls */
