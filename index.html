@@ -410,13 +410,7 @@
                 </div>
             </div>
             <div class="page-content">
-                <div class="games-log-controls">
-                    <div class="round-nav" id="tournamentStatusTabs" style="margin-bottom: 0;">
-                        <div class="round-pill active" data-status="">All Status</div>
-                        <div class="round-pill" data-status="active">Ongoing</div>
-                        <div class="round-pill" data-status="completed">Completed</div>
-                        <div class="round-pill" data-status="draft">Upcoming</div>
-                    </div>
+                <div class="games-log-controls" style="justify-content: space-between;">
                     <div class="filter-box">
                         <select id="tournamentFormatFilter">
                             <option value="">All Formats</option>
@@ -425,31 +419,31 @@
                             <option value="knockout">Knockout</option>
                         </select>
                     </div>
-                </div>
-                <!-- New Tournament button on separate row -->
-                <div style="display: flex; justify-content: flex-end; margin-bottom: 16px; gap: 8px;">
-                    <button class="add-game-btn" onclick="refreshTournaments()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M23 4v6h-6"></path>
-                            <path d="M1 20v-6h6"></path>
-                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                        </svg>
-                        Refresh
-                    </button>
-                    <button class="add-game-btn admin-only" style="display: none;"
-                        onclick="openCreateTournamentModal()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 5v14m-7-7h14"></path>
-                        </svg>
-                        New Tournament
-                    </button>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="add-game-btn" onclick="refreshTournaments()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M23 4v6h-6"></path>
+                                <path d="M1 20v-6h6"></path>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                            Refresh
+                        </button>
+                        <button class="add-game-btn admin-only" style="display: none;"
+                            onclick="openCreateTournamentModal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M12 5v14m-7-7h14"></path>
+                            </svg>
+                            New Tournament
+                        </button>
+                    </div>
                 </div>
                 <div id="tournamentsGrid">
                     <!-- Tournament cards content will be rendered here -->
                 </div>
-            </div>
         </section>
     </main>
 
@@ -746,10 +740,9 @@
                 <p id="confirmModalMessage" style="color: var(--text-secondary); line-height: 1.6; font-size: 15px;">
                 </p>
             </div>
-            <div class="confirm-buttons" style="display: flex; gap: 12px; margin-top: 10px;">
-                <button type="button" class="btn-secondary" onclick="closeConfirmModal()"
-                    style="flex: 1;">Cancel</button>
-                <button type="button" class="confirm-btn" id="confirmModalSubmitBtn" style="flex: 1;">Confirm</button>
+            <div class="confirm-buttons">
+                <button type="button" class="btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+                <button type="button" class="confirm-btn" id="confirmModalSubmitBtn">Confirm</button>
             </div>
         </div>
     </div>

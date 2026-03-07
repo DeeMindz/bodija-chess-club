@@ -1074,8 +1074,16 @@ body {
 /* Tournaments */
 .tournaments-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+}
+
+/* Mobile responsive for tournaments grid */
+@media (max-width: 600px) {
+    .tournaments-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
 }
 
 /* Tournament Manager */
@@ -1122,8 +1130,8 @@ body {
 
 .tournament-card {
     background: var(--bg-secondary);
-    border-radius: 12px;
-    padding: var(--space-lg);
+    border-radius: 10px;
+    padding: 14px;
     border: 1px solid var(--border-color);
     transition: all 0.3s ease;
     overflow: hidden;
@@ -1135,25 +1143,25 @@ body {
 }
 
 .tournament-header {
-    margin-bottom: var(--space-md);
+    margin-bottom: 10px;
 }
 
 .tournament-name {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .tournament-date {
-    font-size: 14px;
+    font-size: 12px;
     color: var(--text-secondary);
 }
 
 .tournament-stats {
     display: flex;
-    gap: var(--space-lg);
-    margin-bottom: var(--space-md);
-    padding-bottom: var(--space-md);
+    gap: 12px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -1163,7 +1171,7 @@ body {
 }
 
 .tournament-stat-value {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--accent-gold);
 }
@@ -1706,16 +1714,53 @@ input[type="date"]::-moz-calendar-picker-indicator {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-md);
+    padding: 12px;
     background: var(--bg-tertiary);
     border-radius: 8px;
-    margin-top: var(--space-lg);
+    margin-top: 12px;
     flex-wrap: wrap;
-    gap: var(--space-md);
+    gap: 8px;
 }
 
 .selection-count {
     font-weight: 600;
+    font-size: 13px;
+}
+
+/* Mobile responsive for player selection modal */
+@media (max-width: 600px) {
+    .player-selection-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+    }
+
+    .player-select-card {
+        padding: 6px 8px !important;
+    }
+
+    .player-select-name {
+        font-size: 12px !important;
+    }
+
+    .player-select-rating {
+        font-size: 11px !important;
+    }
+
+    .selection-summary {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .selection-summary>div {
+        display: flex;
+        gap: 8px;
+    }
+
+    .selection-summary button {
+        flex: 1;
+        font-size: 12px;
+        padding: 8px !important;
+    }
 }
 
 /* Search Box */
@@ -1979,6 +2024,12 @@ input[type="date"]::-moz-calendar-picker-indicator {
     color: #9E9E9E;
 }
 
+.perf-neutral {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+}
+
 .perf-new {
     background: #2979FF;
     color: white;
@@ -2231,6 +2282,7 @@ input[type="date"]::-moz-calendar-picker-indicator {
     font-weight: 500;
     cursor: pointer;
     font-family: 'Outfit', sans-serif;
+    max-width: 160px;
 }
 
 .confirm-buttons .btn-secondary {
