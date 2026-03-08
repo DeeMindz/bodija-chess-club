@@ -622,6 +622,14 @@
                             <option value="roundrobin">Round Robin</option>
                             <option value="knockout">Knockout</option>
                         </select>
+                        <div id="roundRobinOptions" style="display: none; margin-top: 8px;">
+                            <select class="form-select" id="roundRobinType" onchange="updateRoundsInput()">
+                                <option value="single">Single Round Robin</option>
+                                <option value="double">Double Round Robin</option>
+                            </select>
+                            <small id="roundsHint"
+                                style="color: var(--text-secondary); display: block; margin-top: 4px;"></small>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Number of Rounds</label>
