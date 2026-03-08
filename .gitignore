@@ -2,3 +2,10 @@ node_modules/
 .env
 .DS_Store
 dist/
+
+# Documentation (not needed in production)
+Gemini.md
+PROGRESS.md
+
+# Build cache
+.cache/
