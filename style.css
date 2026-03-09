@@ -1137,6 +1137,147 @@ body {
     box-shadow: 0 0 20px rgba(240, 165, 0, 0.15);
 }
 
+/* ── Tournament status tabs (Active / Draft / Completed) ── */
+.t-status-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.t-status-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.t-status-tab:hover {
+    border-color: var(--accent-gold);
+    color: var(--text-primary);
+}
+
+.t-status-tab.active {
+    background: rgba(240, 165, 0, 0.12);
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+
+.t-tab-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.t-tab-count {
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.t-status-tab.active .t-tab-count {
+    background: rgba(240, 165, 0, 0.2);
+    color: var(--accent-gold);
+}
+
+/* ── Tournament card inner layout ── */
+.t-card-row1 {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.t-card-title-date h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.t-card-title-date .tournament-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.t-card-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.t-card-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 10px 0;
+}
+
+.t-card-row2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.t-card-meta-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.t-card-meta-item {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.t-card-meta-item strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.t-card-meta-sep {
+    color: var(--border-color);
+    font-size: 12px;
+}
+
+.t-card-meta-right {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.t-card-badge {
+    padding: 2px 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
 .tournament-header {
     margin-bottom: 10px;
 }
