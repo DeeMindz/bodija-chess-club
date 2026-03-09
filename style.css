@@ -3497,162 +3497,32 @@ body.is-admin .admin-only {
     margin: 0;
 }
 /* ═══════════════════════════════════════════════════════════════
-   TOURNAMENT STATUS TABS
+   CINEMATIC SPLASH SCREEN
 ═══════════════════════════════════════════════════════════════ */
-.t-status-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0;
-    flex-wrap: wrap;
+@keyframes splashLogoIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes splashLetterIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes splashFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes splashLineGrow {
+    from { width: 0; }
+    to   { width: 120px; }
 }
 
-.t-status-tab {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--text-secondary);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: color 0.15s, border-color 0.15s;
-    margin-bottom: -1px;
-}
-
-.t-status-tab:hover { color: var(--text-primary); }
-.t-status-tab.active {
-    color: var(--accent-gold);
-    border-bottom-color: var(--accent-gold);
-}
-
-.t-tab-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.t-tab-count {
-    background: var(--bg-tertiary);
-    border-radius: 10px;
-    padding: 1px 7px;
-    font-size: 12px;
-    color: var(--text-secondary);
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   TOURNAMENT CARD — NEW 2-ROW LAYOUT
-═══════════════════════════════════════════════════════════════ */
-.t-card-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 4px;
-}
-
-.t-card-row1 {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-}
-
-.t-card-title-date {
-    min-width: 0;
-    flex: 1;
-}
-
-.t-card-divider {
-    height: 1px;
-    background: var(--border-color);
-    margin: 10px 0;
-}
-
-.t-card-row2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.t-card-meta-left {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: var(--text-secondary);
-    flex-wrap: wrap;
-}
-
-.t-card-meta-sep { color: var(--border-color); }
-
-.t-card-meta-right {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-
-.t-card-badge {
-    padding: 3px 8px;
-    background: var(--bg-tertiary);
-    border-radius: 4px;
-    font-size: 12px;
-    color: var(--text-secondary);
-    white-space: nowrap;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   BLINKING DOT KEYFRAMES
-═══════════════════════════════════════════════════════════════ */
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.3; }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   MOBILE: TOURNAMENT OVERVIEW — ROW LAYOUT
-═══════════════════════════════════════════════════════════════ */
-@media (max-width: 600px) {
-    .tournament-summary-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    .tournament-summary-item {
-        padding: 10px 8px;
-    }
-
-    .tournament-summary-value {
-        font-size: 15px;
-    }
-
-    /* Final summary grid on mobile */
-    .final-summary-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 10px !important;
-    }
-
-    /* Tabs wrap nicely on mobile */
-    .t-status-tabs {
-        gap: 4px;
-    }
-
-    .t-status-tab {
-        padding: 6px 10px;
-        font-size: 13px;
-    }
-
-    /* Card meta wraps */
-    .t-card-row2 {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
+.splash-letter {
+    display: inline-block;
+    color: #c9a84c;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-family: 'Outfit', sans-serif;
+    opacity: 0;
+    animation: splashLetterIn 0.3s ease forwards;
 }
