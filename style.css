@@ -3672,40 +3672,24 @@ body.is-admin .admin-only {
 /* ═══════════════════════════════════════════════════════════════════
    PWA SAFE AREA — handles iPhone notch, Dynamic Island, Android
    cutouts so the app never overlaps the system status bar.
-   env(safe-area-inset-*) is 0 in browser, actual inset when installed
+   env(safe-area-inset-*) is 0 in normal browser — no effect on desktop.
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Push entire app body below the status bar */
-body {
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-}
-
-/* Sidebar: extend top to cover the inset area with its own background */
+/* Sidebar fills full height and covers the notch area with its own bg */
 .sidebar {
-    top: env(safe-area-inset-top);
-    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    padding-top: env(safe-area-inset-top);
+    top: 0;
+    height: 100vh;
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Page header: sticky top needs to account for inset too */
+/* Page header stays just below the status bar */
 .page-header {
-    top: env(safe-area-inset-top);
+    top: 0;
+    padding-top: max(var(--space-lg), calc(var(--space-lg) + env(safe-area-inset-top)));
 }
 
-/* Status bar colour fill — thin bar above sidebar matching its bg */
-@supports (padding-top: env(safe-area-inset-top)) {
-    body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: env(safe-area-inset-top);
-        background: var(--bg-secondary);
-        z-index: 9999;
-        pointer-events: none;
-    }
+/* Bottom breathing room on phones with home indicator */
+.main-content {
+    padding-bottom: env(safe-area-inset-bottom);
 }
