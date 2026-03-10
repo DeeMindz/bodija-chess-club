@@ -1,0 +1,26 @@
+{
+  "name": "Bodija Chess Club",
+  "short_name": "BCC",
+  "description": "Bodija Chess Club — tournaments, ratings & player management",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D1117",
+  "theme_color": "#F0A500",
+  "icons": [
+    {
+      "src": "images/BCC logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/BCC logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "games"],
+  "lang": "en"
+}
