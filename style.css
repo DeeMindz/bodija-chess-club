@@ -2682,10 +2682,10 @@ input[type="date"].form-input {
         padding: var(--space-md);
     }
 
-    /* Page header padding for mobile - hamburger is on right now */
+    /* Page header padding for mobile */
     .page-header {
-        padding-left: var(--space-xl);
-        padding-right: 64px;
+        padding-left: var(--space-md);
+        padding-right: var(--space-md);
     }
 
     .dashboard-grid {
@@ -2806,22 +2806,23 @@ input[type="date"].form-input {
 /* Mobile Menu Button */
 .mobile-menu-btn {
     display: none;
-    position: fixed;
-    top: 16px;
-    right: 16px;
+    position: relative;
+    top: auto;
+    right: auto;
     left: auto;
-    z-index: var(--z-hamburger);
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
+    z-index: auto;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
     border-radius: 8px;
     border: none;
-    background: var(--bg-secondary);
+    background: var(--bg-tertiary);
     color: var(--text-primary);
     cursor: pointer;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
@@ -3675,7 +3676,7 @@ body.is-admin .admin-only {
    env(safe-area-inset-*) is 0 in normal browser — no effect on desktop.
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Sidebar fills full height and covers the notch area with its own bg */
+/* Sidebar covers full height, its own bg fills behind the notch */
 .sidebar {
     top: 0;
     height: 100vh;
@@ -3683,10 +3684,9 @@ body.is-admin .admin-only {
     padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Page header stays just below the status bar */
+/* Page header: push content below the status bar */
 .page-header {
-    top: 0;
-    padding-top: max(var(--space-lg), calc(var(--space-lg) + env(safe-area-inset-top)));
+    padding-top: max(var(--space-lg), calc(var(--space-md) + env(safe-area-inset-top)));
 }
 
 /* Bottom breathing room on phones with home indicator */
