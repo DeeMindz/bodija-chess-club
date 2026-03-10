@@ -22,13 +22,13 @@
       "purpose": "any"
     },
     {
-      "src": "images/BCC logo.png",
+      "src": "images/splash-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "images/BCC logo.png",
+      "src": "images/splash-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
