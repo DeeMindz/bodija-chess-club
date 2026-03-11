@@ -67,6 +67,9 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // Skip non-http requests (chrome-extension, etc.)
+  if (!url.protocol.startsWith('http')) return;
+
   // Cache first for all other static assets (CSS, JS, images, fonts)
   event.respondWith(
     caches.match(event.request).then(cached => {
