@@ -2,7 +2,7 @@
 // BCC Service Worker — caches app shell for offline/fast load
 // ═══════════════════════════════════════════════════════════════════
 
-const CACHE_NAME   = 'bcc-v1';
+const CACHE_NAME   = 'bcc-v2';
 const CACHE_ASSETS = [
   '/',
   '/index.html',
