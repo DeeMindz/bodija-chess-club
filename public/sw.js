@@ -2,13 +2,10 @@
 // BCC Service Worker — caches app shell for offline/fast load
 // ═══════════════════════════════════════════════════════════════════
 
-const CACHE_NAME   = 'bcc-v2';
+const CACHE_NAME   = 'bcc-v3';
 const CACHE_ASSETS = [
   '/',
   '/index.html',
-  '/style.css',
-  '/lib/main.js',
-  '/lib/api.js',
   '/images/BCC logo.png',
   '/manifest.json',
   'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap',
