@@ -2274,7 +2274,7 @@ function renderLeaderboard() {
     if (tbody) tbody.innerHTML = filtered.map((player, idx) => {
         if (!player) return '';
         const cat = window.activeLeaderboardCategory;
-        const title = getTitle(getRatingForCategory(player, cat));
+        const title = getTitle(player.rapid_rating || player.bodija_rating || 1600);
         const catStats = getCategoryStats(player, cat);
         const perf = getPerformanceDataForCategory(player, cat);
         const displayGames = catStats.total > 0 ? catStats.total : (player?.games ?? 0);
@@ -2317,7 +2317,7 @@ function renderPlayers() {
 
     if (grid) grid.innerHTML = nonGuestPlayers.map(player => {
         if (!player) return '';
-        const title = getTitle(getRatingForCategory(player, window.activeLeaderboardCategory));
+        const title = getTitle(player.rapid_rating || player.bodija_rating || 1600);
         const winRate = calculateWinRate(player);
         const avatarContent = player.photo
             ? `<img src="${player.photo}" alt="${player.name}" class="player-card-avatar-img">`
@@ -2348,12 +2348,8 @@ function renderPlayers() {
                                 <div class="player-card-stat-label">Losses</div>
                             </div>
                         </div>
-                        <div class="player-card-rating">
-                            <span class="player-card-rating-label">Current Rating</span>
-                            <span class="player-card-rating-value">${player?.rating ?? 1600}</span>
-                        </div>
-                    </div >
-            `;
+            </div>
+        `;
     }).join('');
 }
 
