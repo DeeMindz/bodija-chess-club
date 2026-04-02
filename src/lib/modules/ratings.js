@@ -64,19 +64,10 @@ function getPerformanceDataForCategory(player, cat) {
     if (g.result === '1/2-1/2') formScore += 0.5;else if (isWhite && g.result === '1-0' || !isWhite && g.result === '0-1') formScore += 1;
   });
   const formPct = formScore / last5.length;
-  if (formPct >= 0.8) return {
-    state: 'hot',
-    icon: '&#x1F525;',
-    class: 'perf-hot'
-  };
-  if (formPct >= 0.6) return {
-    state: 'up',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>',
-    class: 'perf-up'
-  };
+  if (formPct >= 0.6) return { state: 'hot', icon: '&#x1F525;', class: 'perf-hot' };
   if (formPct >= 0.4) return {
     state: 'stable',
-    icon: '=',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>',
     class: 'perf-stable'
   };
   if (formPct >= 0.2) return {
@@ -84,11 +75,7 @@ function getPerformanceDataForCategory(player, cat) {
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>',
     class: 'perf-down'
   };
-  return {
-    state: 'cold',
-    icon: '&#x1F976;',
-    class: 'perf-cold'
-  };
+  return { state: 'cold', icon: '&#x1F976;', class: 'perf-cold' };
 }
 
 export // Calculate ELO rating change

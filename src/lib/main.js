@@ -1,7 +1,3 @@
-import * as ui_leaderboard from './modules/ui-leaderboard.js';
-import * as ui_players from './modules/ui-players.js';
-import * as ui_games from './modules/ui-games.js';
-import * as ui_tournaments from './modules/ui-tournaments.js';
 import * as utils from './modules/utils.js';
 import * as playerstats from './modules/playerstats.js';
 import * as ratings from './modules/ratings.js';
@@ -18,22 +14,6 @@ window.resetPlayersRatings = utils.resetPlayersRatings;
 window.calculateWinRate = playerstats.calculateWinRate;
 window.calculateHeadToHead = playerstats.calculateHeadToHead;
 window.getPerformanceData = playerstats.getPerformanceData;
-window._buildMedalStack = ui_leaderboard._buildMedalStack;
-window.renderLeaderboard = ui_leaderboard.renderLeaderboard;
-window.renderPlayers = ui_players.renderPlayers;
-window.openPlayerDetail = ui_players.openPlayerDetail;
-window.closePlayerDetail = ui_players.closePlayerDetail;
-window.renderGamesLog = ui_games.renderGamesLog;
-window.showAddGameModal = ui_games.showAddGameModal;
-window.closeAddGameModal = ui_games.closeAddGameModal;
-window.populatePlayerSelects = ui_games.populatePlayerSelects;
-window.closeGameDetailModal = ui_games.closeGameDetailModal;
-window.renderTournaments = ui_tournaments.renderTournaments;
-window.renderTournamentsList = ui_tournaments.renderTournamentsList;
-window.buildStandingsHTML = ui_tournaments.buildStandingsHTML;
-window.buildKnockoutHTML = ui_tournaments.buildKnockoutHTML;
-window.showTournamentDialog = ui_tournaments.showTournamentDialog;
-window.closeTournamentDialog = ui_tournaments.closeTournamentDialog;
 
 window.calculateElo = ratings.calculateElo;
 window.getTitle = ratings.getTitle;
@@ -5784,3 +5764,417 @@ window.repairPlayerRatings = async function () {
     showToast('Repair failed: ' + sanitizeError(e.message), 'error');
   }
 };
+
+// ==================== UI-LEADERBOARD (inlined) ====================
+export // ==================== LEADERBOARD ====================
+
+// Build a compact inline medal stack for leaderboard/cards/detail header
+function _buildMedalStack(playerId, size = 22, maxShow = 3, clickable = true) {
+  const medals = store.medalsCache[playerId] || [];
+  if (!medals.length) return '';
+  const emoji = {
+    1: '🥇',
+    2: '🥈',
+    3: '🥉'
+  };
+  const color = {
+    1: '#FFD700',
+    2: '#C0C0C0',
+    3: '#CD7F32'
+  };
+  const label = {
+    1: '1st',
+    2: '2nd',
+    3: '3rd'
+  };
+  const shown = medals.slice(0, maxShow);
+  const extra = medals.length - shown.length;
+  const click = clickable ? `onclick="event.stopPropagation();openMedalsModal('${playerId}')"` : '';
+  const pxSize = size + 'px';
+  const fontSize = Math.round(size * 0.55) + 'px';
+  const badges = shown.map((m, i) => {
+    const dateStr = m.date ? new Date(m.date).toLocaleDateString('en-US', {
+      month: 'short',
+      year: 'numeric'
+    }) : '';
+    const tip = label[m.position] + ' · ' + m.tournamentName + ' · ' + dateStr;
+    return `<span title="${tip}" ${click} style="
+            display:inline-flex;align-items:center;justify-content:center;
+            width:${pxSize};height:${pxSize};border-radius:50%;
+            background:radial-gradient(circle at 35% 35%,${color[m.position]}44,${color[m.position]}18);
+            border:1.5px solid ${color[m.position]}77;
+            font-size:${fontSize};cursor:${clickable ? 'pointer' : 'default'};
+            box-shadow:0 1px 4px ${color[m.position]}44;
+            margin-left:${i > 0 ? '-6px' : '0'};z-index:${maxShow - i};position:relative;
+            transition:transform 0.15s,z-index 0s;flex-shrink:0;"
+            onmouseenter="this.style.transform='scale(1.25)';this.style.zIndex=99"
+            onmouseleave="this.style.transform='scale(1)';this.style.zIndex=${maxShow - i}"
+        >${emoji[m.position]}</span>`;
+  }).join('');
+  const overflow = extra > 0 ? `<span ${click} title="View all medals" style="
+        display:inline-flex;align-items:center;justify-content:center;
+        width:${pxSize};height:${pxSize};border-radius:50%;
+        background:var(--bg-tertiary);border:1.5px solid rgba(255,255,255,0.15);
+        font-size:${Math.round(size * 0.38) + 'px'};font-weight:700;color:var(--text-secondary);
+        cursor:pointer;margin-left:-6px;z-index:0;position:relative;flex-shrink:0;
+        transition:background 0.15s,color 0.15s;"
+        onmouseenter="this.style.background='var(--accent-gold)';this.style.color='#000'"
+        onmouseleave="this.style.background='var(--bg-tertiary)';this.style.color='var(--text-secondary)'"
+    >+${extra}</span>` : '';
+  return `<span style="display:inline-flex;align-items:center;">${badges}${overflow}</span>`;
+}
+
+function renderLeaderboard() {
+  const tbody = document.getElementById('leaderboardBody');
+  if (!store.players || store.players.length === 0) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px; color: var(--text-secondary);">No players found. Add players to the database to see them here.</td></tr>';
+    return;
+  }
+
+  // Filter out guest players
+  const nonGuestPlayers = store.players.filter(p => p && !p.isGuest);
+  const sorted = [...nonGuestPlayers].sort((a, b) => getRatingForCategory(b, window.activeLeaderboardCategory) - getRatingForCategory(a, window.activeLeaderboardCategory));
+  const searchTerm = document.getElementById('leaderboardSearch')?.value?.toLowerCase() || '';
+  const filtered = sorted.filter(p => p && (searchTerm === '' || p.name && p.name.toLowerCase().includes(searchTerm)));
+  if (tbody) tbody.innerHTML = filtered.map((player, idx) => {
+    if (!player) return '';
+    const cat = window.activeLeaderboardCategory;
+    const title = getTitle(player.rapid_rating || player.bodija_rating || 1600);
+    const catStats = getCategoryStats(player, cat);
+    const perf = getPerformanceDataForCategory(player, cat);
+    const displayGames = catStats.total > 0 ? catStats.total : player.games ?? 0;
+    return `
+            <div class="table-row fade-in" onclick="openPlayerDetail('${player?.id ?? ''}')" title="Tap for details">
+                        <span class="rank-cell">${idx + 1}</span>
+                        <div class="player-cell">
+                            <span class="title-badge ${title.class}">${title.title}</span>
+                            <span class="player-name">${player?.name ?? 'Unknown'}</span>
+                            ${_buildMedalStack(player.id, 20, 3)}
+                        </div>
+                        <div class="perf-indicator">
+                            ${perf.state === 'neutral' ? `<span class="perf-neutral">${perf.label}</span>` : `<span class="perf-icon ${perf.class}">${perf.icon}</span>`}
+                        </div>
+                        <span class="rating-cell">${getRatingForCategory(player, cat)}</span>
+                        <span class="mobile-hide">${getPeakRatingForCategory(player, cat)}</span>
+                        <span class="mobile-hide">${displayGames}</span>
+                        <span>${catStats.wins}-${catStats.draws}-${catStats.losses}</span>
+                        <span>${catStats.winRate}%</span>
+                        <span class="status-badge mobile-hide ${player?.status ?? 'active'}">${player?.status ?? 'active'}</span>
+            </div>
+            `;
+  }).join('');
+}
+
+// ==================== PLAYERS ====================
+
+
+// ==================== UI-PLAYERS (inlined) ====================
+// ==================== PLAYERS ====================
+function renderPlayers() {
+  const grid = document.getElementById('playersGrid');
+  if (!store.players || store.players.length === 0) {
+    if (grid) grid.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">No players found. Add players to the database to see them here.</div>';
+    return;
+  }
+
+  // Filter out guest players
+  const nonGuestPlayers = store.players.filter(p => p && !p.isGuest);
+  if (grid) grid.innerHTML = nonGuestPlayers.map(player => {
+    if (!player) return '';
+    const title = getTitle(player.rapid_rating || player.bodija_rating || 1600);
+    const winRate = calculateWinRate(player);
+    const avatarContent = player.photo ? `<img src="${player.photo}" alt="${player.name}" class="player-card-avatar-img">` : `<div class="player-card-avatar">${getInitials(player?.name ?? 'Unknown')}</div>`;
+    return `
+            <div class="player-card fade-in" onclick = "openPlayerDetail('${player?.id ?? ''}')" >
+                        <div class="player-card-header">
+                            <div class="player-card-avatar-container">${avatarContent}</div>
+                            <div class="player-card-info">
+                                <h3>${player?.name ?? 'Unknown'}</h3>
+                                <span class="player-card-status ${player?.status ?? 'active'}">${player?.status ?? 'Active'}</span>
+                                <span class="title-badge ${title.class}">${title.title}</span>
+                                ${_buildMedalStack(player.id, 22, 4) ? `<div style="margin-top:5px;">${_buildMedalStack(player.id, 22, 4)}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="player-card-stats">
+                            <div class="player-card-stat">
+                                <div class="player-card-stat-value">${player?.wins ?? 0}</div>
+                                <div class="player-card-stat-label">Wins</div>
+                            </div>
+                            <div class="player-card-stat">
+                                <div class="player-card-stat-value">${player?.draws ?? 0}</div>
+                                <div class="player-card-stat-label">Draws</div>
+                            </div>
+                            <div class="player-card-stat">
+                                <div class="player-card-stat-value">${player?.losses ?? 0}</div>
+                                <div class="player-card-stat-label">Losses</div>
+                            </div>
+                        </div>
+            </div>
+        `;
+  }).join('');
+}
+
+// ==================== ADMIN PHOTO EDIT ====================
+
+// Admin: handle photo file selection → compress → upload → re-render
+
+export // Compress image File → Blob (JPEG), max maxSize px on longest side.
+// Returns a Blob — NOT a base64 string — so it can be streamed to Storage.
+
+// Legacy helper kept in case anything else calls it (returns base64 data-URL)
+
+function openPlayerDetail(playerId, cat) {
+    cat = cat || window.activeLeaderboardCategory || 'rapid';
+    const player = getPlayerById(playerId);
+    if (!player) return;
+
+    const title = getTitle(player.rapid_rating || player.bodija_rating || 1600);
+    const catStats = getCategoryStats(player, cat);
+    const winRate = catStats.winRate;
+    const perf = getPerformanceDataForCategory(player, cat);
+    const h2h = calculateHeadToHead(playerId);
+    const content = document.getElementById('playerDetailContent');
+
+    const avatarInner = player.photo
+        ? `<img src="${player.photo}" alt="${player.name}" class="player-detail-avatar-img" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent-gold);">`
+        : `<div class="player-detail-avatar">${getInitials(player.name)}</div>`;
+
+    const avatarContent = isAdmin ? `
+        <div style="position:relative;width:80px;height:80px;cursor:pointer;flex-shrink:0;"
+             onclick="document.getElementById('adminPhotoInput_${player.id}').click()"
+             title="Click to change photo">
+            ${avatarInner}
+            <div style="position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.52);
+                        display:flex;flex-direction:column;align-items:center;justify-content:center;
+                        opacity:0;transition:opacity 0.18s;pointer-events:none;"
+                 class="avatar-edit-overlay">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                     fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                </svg>
+                <span style="color:#fff;font-size:9px;font-weight:600;margin-top:3px;letter-spacing:.5px;">EDIT</span>
+            </div>
+            <input type="file" id="adminPhotoInput_${player.id}" accept="image/*"
+                   style="display:none;" onchange="adminUpdatePlayerPhoto('${player.id}', this)">
+        </div>
+        <style>
+          [onclick*="adminPhotoInput"]:hover .avatar-edit-overlay { opacity: 1 !important; }
+        </style>` : `<div style="width:80px;height:80px;flex-shrink:0;">${avatarInner}</div>`;
+
+    if (content) content.innerHTML = `
+        <div class="player-detail-header">
+            <div style="flex-shrink:0;">${avatarContent}</div>
+            <div class="player-detail-info">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+                    <h2 style="margin:0;">${player.name}</h2>
+                    <span class="player-card-status ${player.status}">${player.status}</span>
+                    <div class="perf-indicator" style="transform:scale(1.2);">
+                        ${perf.state === 'neutral'
+                            ? `<span class="perf-new">${perf.label}</span>`
+                            : `<span class="perf-icon ${perf.class}">${perf.icon}</span>`}
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <span class="title-badge ${title.class}">${title.title}</span>
+                    ${_buildMedalStack(player.id, 26, 5)}
+                </div>
+            </div>
+        </div>
+
+        <div class="category-tabs" style="margin-top:20px;justify-content:center;">
+            <button class="category-tab ${cat === 'rapid' ? 'active' : ''}" onclick="openPlayerDetail('${player.id}', 'rapid')">Rapid</button>
+            <button class="category-tab ${cat === 'blitz' ? 'active' : ''}" onclick="openPlayerDetail('${player.id}', 'blitz')">Blitz</button>
+            <button class="category-tab ${cat === 'classical' ? 'active' : ''}" onclick="openPlayerDetail('${player.id}', 'classical')">Classical</button>
+        </div>
+
+        <div class="player-detail-stats">
+            <div class="player-detail-stat">
+                <div class="player-detail-stat-value">${getRatingForCategory(player, cat)}</div>
+                <div class="player-detail-stat-label">Current Rating</div>
+            </div>
+            <div class="player-detail-stat">
+                <div class="player-detail-stat-value">${getPeakRatingForCategory(player, cat)}</div>
+                <div class="player-detail-stat-label">Peak Rating</div>
+            </div>
+            <div class="player-detail-stat">
+                <div class="player-detail-stat-value">${winRate}%</div>
+                <div class="player-detail-stat-label">Win Rate</div>
+            </div>
+            <div class="player-detail-stat">
+                <div class="player-detail-stat-value">${catStats.total > 0 ? catStats.total : (player.games ?? 0)}</div>
+                <div class="player-detail-stat-label">Games</div>
+            </div>
+        </div>
+        <div class="player-detail-stats" style="grid-template-columns:repeat(3,1fr);">
+            <div class="player-detail-stat">
+                <div class="player-detail-stat-value" style="color:var(--green)">${catStats.wins}</div>
+                <div class="player-detail-stat-label">Wins</div>
+            </div>
+            <div class="player-detail-stat">
+                <div class="player-detail-stat-value" style="color:var(--amber)">${catStats.draws}</div>
+                <div class="player-detail-stat-label">Draws</div>
+            </div>
+            <div class="player-detail-stat">
+                <div class="player-detail-stat-value" style="color:var(--danger)">${catStats.losses}</div>
+                <div class="player-detail-stat-label">Losses</div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <h4 class="chart-title">Rating History</h4>
+            <canvas id="ratingChart" height="150"></canvas>
+        </div>
+        <div class="h2h-section">
+            <h4>Head-to-Head Record</h4>
+            <div class="h2h-list">
+                ${h2h.map(opponent => `
+                    <div class="h2h-item">
+                        <span class="h2h-name">${opponent.name}</span>
+                        <span class="h2h-record">
+                            <span class="h2h-wins">${opponent.wins}W</span> -
+                            <span class="h2h-draws">${opponent.draws}D</span> -
+                            <span class="h2h-losses">${opponent.losses}L</span>
+                        </span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    setTimeout(async () => {
+        try {
+            const history = await api.fetchPlayerRatingHistory(player.id);
+            if (history && history.length > 0) {
+                const series = [history[0].rating_before, ...history.map(h => h.rating_after)];
+                renderRatingChart(series);
+            } else {
+                renderRatingChart([getRatingForCategory(player, cat)]);
+            }
+        } catch (e) {
+            renderRatingChart([getRatingForCategory(player, cat)]);
+        }
+    }, 100);
+    document.getElementById('playerDetailModal').classList.add('active');
+}
+
+// ==================== UI-GAMES (inlined) ====================
+
+function renderGamesLog() {
+  const container = document.getElementById('gamesLogBody');
+  if (!store.games || store.games.length === 0) {
+    if (container) container.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-secondary);">No games found. Add games to the database to see them here.</td></tr>';
+    return;
+  }
+  const tournamentFilter = document.getElementById('tournamentFilter').value;
+  let filtered = [...store.games].sort((a, b) => new Date(b.date) - new Date(a.date));
+  if (tournamentFilter) {
+    filtered = filtered.filter(g => g.tournament === tournamentFilter);
+  }
+  const tbody = document.getElementById('gamesBody');
+  if (tbody) tbody.innerHTML = filtered.map((game, idx) => {
+    // Use stored player names from the game record
+    const whiteName = game.whiteName || 'Unknown';
+    const blackName = game.blackName || 'Unknown';
+    let resultClass = 'draw';
+    if (game.result === '1-0') resultClass = 'white-win';
+    if (game.result === '0-1') resultClass = 'black-win';
+    const catLabel = game.category === 'blitz' ? '⚡ Blitz' : game.category === 'classical' ? '♟ Classical' : '🕐 Rapid';
+    return `
+            <div class="table-row fade-in" onclick = "openGameDetail('${game?.id ?? ''}')" style = "cursor: pointer;" >
+                        <span class="mobile-hide">${idx + 1}</span>
+                        <span>${game.date || ''}</span>
+                        <span>${whiteName}</span>
+                        <div style="display: flex; justify-content: center;">
+                            <span class="result-badge ${resultClass}">${formatResult(game.result)}</span>
+                        </div>
+                        <span>${blackName}</span>
+                        <span class="mobile-hide"><span style="font-size:11px; padding:2px 7px; border-radius:10px; font-weight:600; background: var(--bg-tertiary); color: var(--text-secondary);">${catLabel}</span></span>
+                        <span class="single-line-text mobile-hide">${game.tournament || '-'}</span>
+                        <span class="rating-change ${game.whiteChange >= 0 ? 'positive' : 'negative'} mobile-hide">${game.whiteChange >= 0 ? '+' : ''}${game.whiteChange}</span>
+                        <span class="rating-change ${game.blackChange >= 0 ? 'positive' : 'negative'} mobile-hide">${game.blackChange >= 0 ? '+' : ''}${game.blackChange}</span>
+            </div>
+            `;
+  }).join('');
+}
+
+// ==================== HEAD-TO-HEAD ANALYTICS ====================
+
+function closeGameDetailModal() {
+  document.getElementById('gameDetailModal').classList.remove('active');
+}
+
+function populatePlayerSelects() {
+  const whiteSelect = document.getElementById('whitePlayer');
+  const blackSelect = document.getElementById('blackPlayer');
+  const options = store.players.map(p => `<option value = "${p.id}" > ${p.name} (${p.rating})</option > `).join('');
+  if (whiteSelect) whiteSelect.innerHTML = `<option value = "" > Select White Player</option > ${options} `;
+  if (blackSelect) blackSelect.innerHTML = `<option value = "" > Select Black Player</option > ${options} `;
+}
+
+function closeAddGameModal() {
+  document.getElementById('addGameModal').classList.remove('active');
+}
+
+
+// ==================== UI-TOURNAMENTS (inlined) ====================
+function renderTournaments() {
+  const grid = document.getElementById('tournamentsGrid');
+  if (!grid) return;
+  const formatFilter = document.getElementById('tournamentFormatFilter')?.value || '';
+  let filtered = window.extendedTournaments || [];
+  if (formatFilter) filtered = filtered.filter(t => t.format?.toLowerCase() === formatFilter.toLowerCase());
+  const active = filtered.filter(t => t.status?.toLowerCase() === 'active');
+  const draft = filtered.filter(t => t.status?.toLowerCase() === 'draft');
+  const completed = filtered.filter(t => t.status?.toLowerCase() === 'completed');
+
+  // Determine current tab (persist via data attr)
+  const currentTab = grid.dataset.tab || (active.length ? 'active' : draft.length ? 'draft' : 'completed');
+  const tabCounts = {
+    active: active.length,
+    draft: draft.length,
+    completed: completed.length
+  };
+  const tabList = [{
+    key: 'active',
+    label: 'Active',
+    dot: true
+  }, {
+    key: 'draft',
+    label: 'Draft',
+    dot: false
+  }, {
+    key: 'completed',
+    label: 'Completed',
+    dot: false
+  }];
+  const tabsHtml = tabList.map(t => `
+        <button class="t-status-tab ${currentTab === t.key ? 'active' : ''}"
+                onclick="switchStatusTab('${t.key}')"
+                data-tab="${t.key}">
+            ${t.dot ? `<span class="t-tab-dot" style="background:#22c55e;animation:blink 1.2s infinite;"></span>` : ''}
+            ${t.label}
+            ${tabCounts[t.key] > 0 ? `<span class="t-tab-count">${tabCounts[t.key]}</span>` : ''}
+        </button>
+    `).join('');
+
+  // Patch local tournament player count — tpCountMap has no entry until sync
+  const local = window._localTournament;
+  if (local?.players?.length) {
+    for (const t of active) {
+      if (t.id === local.id) {
+        t.playerCount = local.players.length;
+        t.players = local.players;
+      }
+    }
+  }
+  const shown = currentTab === 'active' ? active : currentTab === 'draft' ? draft : completed;
+  const cardsHtml = shown.length ? `<div class="tournaments-grid">${shown.map(renderTournamentCard).join('')}</div>` : `<div style="text-align:center;padding:60px 20px;color:var(--text-secondary);">
+               <p>No ${currentTab} tournaments.</p>
+           </div>`;
+  grid.innerHTML = `
+        <div class="section-container">
+            <div class="t-status-tabs">${tabsHtml}</div>
+            ${cardsHtml}
+        </div>`;
+  grid.dataset.tab = currentTab;
+}
