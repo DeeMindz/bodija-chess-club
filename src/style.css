@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     /* Z-Index Layering */
     --z-base: 1;
     --z-sticky: 10;
@@ -2503,6 +2503,36 @@ input[type="date"].form-input {
 /* Player Detail Modal */
 .player-detail-modal .modal {
     max-width: 700px;
+}
+
+.category-tabs {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+    margin: var(--space-lg) 0;
+}
+
+.category-tab {
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.category-tab:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.category-tab.active {
+    background: var(--accent-gold);
+    color: var(--bg-primary);
+    border-color: var(--accent-gold);
 }
 
 .player-detail-header {

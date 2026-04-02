@@ -16,5 +16,11 @@
     "@supabase/supabase-js": "^2.98.0",
     "dotenv": "^17.3.1",
     "vite": "^7.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/generator": "^7.29.1",
+    "@babel/parser": "^7.29.2",
+    "@babel/traverse": "^7.29.0"
   }
 }

@@ -1380,6 +1380,13 @@ function mapPlayerFromDB(dbPlayer) {
     photo: dbPlayer.photo || null,
     rating: rating,
     peakRating: peakRating,
+    bodija_rating: dbPlayer.bodija_rating,
+    rapid_rating: dbPlayer.rapid_rating,
+    rapid_peak_rating: dbPlayer.rapid_peak_rating,
+    blitz_rating: dbPlayer.blitz_rating,
+    blitz_peak_rating: dbPlayer.blitz_peak_rating,
+    classical_rating: dbPlayer.classical_rating,
+    classical_peak_rating: dbPlayer.classical_peak_rating,
     games: gamesPlayed,
     wins: wins,
     draws: draws,
@@ -1859,7 +1866,9 @@ function renderDashboard() {
   renderRecentGames();
 }
 function renderPodium() {
-  const sorted = [...store.players].sort((a, b) => b.rating - a.rating).slice(0, 3);
+  const cat = document.getElementById('podiumCategory')?.value || 'rapid';
+  const nonGuestPlayers = store.players.filter(p => !p.isGuest);
+  const sorted = [...nonGuestPlayers].sort((a, b) => getRatingForCategory(b, cat) - getRatingForCategory(a, cat)).slice(0, 3);
   const podium = document.getElementById('podium');
   if (!podium) return;
 
@@ -1876,7 +1885,7 @@ function renderPodium() {
                         <div class="podium-rank">${idx + 1}</div>
                         <div class="podium-avatar-container ${medalClasses[displayIdx]}">${avatarContent}</div>
                         <div class="podium-name">${player.name}</div>
-                        <div class="podium-rating">${player.rating}</div>
+                        <div class="podium-rating">${getRatingForCategory(player, cat)}</div>
                         <div class="podium-bar"></div>
                     </div >
             `;
@@ -5852,7 +5861,7 @@ function renderLeaderboard() {
                             ${_buildMedalStack(player.id, 20, 3)}
                         </div>
                         <div class="perf-indicator">
-                            ${perf.state === 'neutral' ? `<span class="perf-neutral">${perf.label}</span>` : `<span class="perf-icon ${perf.class}">${perf.icon}</span>`}
+                            ${perf.state === 'neutral' ? `<span class="perf-new">${perf.label}</span>` : `<span class="perf-icon ${perf.class}">${perf.icon}</span>`}
                         </div>
                         <span class="rating-cell">${getRatingForCategory(player, cat)}</span>
                         <span class="mobile-hide">${getPeakRatingForCategory(player, cat)}</span>
@@ -6121,7 +6130,7 @@ function renderTournaments() {
   const grid = document.getElementById('tournamentsGrid');
   if (!grid) return;
   const formatFilter = document.getElementById('tournamentFormatFilter')?.value || '';
-  let filtered = window.extendedTournaments || [];
+  let filtered = extendedTournaments || [];
   if (formatFilter) filtered = filtered.filter(t => t.format?.toLowerCase() === formatFilter.toLowerCase());
   const active = filtered.filter(t => t.status?.toLowerCase() === 'active');
   const draft = filtered.filter(t => t.status?.toLowerCase() === 'draft');
