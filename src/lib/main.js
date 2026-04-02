@@ -1,4 +1,4 @@
-﻿import * as api from './api.js';
+import * as api from './api.js';
 import { supabase, getSupabaseUrl } from './supabase.js';
 
 
@@ -41,6 +41,106 @@ function getPeakRatingForCategory(player, cat) {
     if (cat === 'classical') return player.classical_peak_rating || 1600;
     return player.peak_rating || 1600;
 }
+
+// Derive rating category from a time control string
+function getCategoryFromTimeControl(tc) {
+    if (!tc) return 'rapid';
+    const t = tc.toLowerCase();
+    if (t.includes('classical')) return 'classical';
+    if (t.includes('blitz')) return 'blitz';
+    // Rapid covers any rapid label
+    return 'rapid';
+}
+window.getCategoryFromTimeControl = getCategoryFromTimeControl;
+
+// Custom time control helpers for tournament creation form
+window.toggleCustomTimeControl = function(val) {
+    const customInput = document.getElementById('customTimeControl');
+    if (!customInput) return;
+    if (val === 'custom') {
+        customInput.style.display = 'block';
+        customInput.focus();
+    } else {
+        customInput.style.display = 'none';
+        customInput.value = '';
+    }
+};
+
+window.syncCustomTimeControl = function(val) {
+    // Keep custom input in sync — used when submitting the form
+    // The form submit handler reads this value directly
+};
+
+// Get the effective time control from the form (handles custom input)
+window.getEffectiveTimeControl = function() {
+    const sel = document.getElementById('tournamentTimeControl');
+    if (!sel) return '';
+    if (sel.value === 'custom') {
+        const custom = document.getElementById('customTimeControl')?.value?.trim();
+        return custom || 'Custom';
+    }
+    return sel.value;
+};
+
+
+// Get category-specific WDL stats from the games array
+function getCategoryStats(player, cat) {
+    const catGames = (games || []).filter(g => {
+        const isPlayer = (g.white === player.id || g.black === player.id ||
+                          g.white_player_id === player.id || g.black_player_id === player.id);
+        if (!isPlayer) return false;
+        return (g.category || 'rapid') === cat;
+    });
+    const wins = catGames.filter(g => {
+        const isWhite = (g.white === player.id || g.white_player_id === player.id);
+        return (isWhite && g.result === '1-0') || (!isWhite && g.result === '0-1');
+    }).length;
+    const draws = catGames.filter(g => g.result === '1/2-1/2').length;
+    const losses = catGames.filter(g => {
+        const isWhite = (g.white === player.id || g.white_player_id === player.id);
+        return (isWhite && g.result === '0-1') || (!isWhite && g.result === '1-0');
+    }).length;
+    const total = wins + draws + losses;
+    const winRate = total === 0 ? 0 : Math.round(((wins + draws * 0.5) / total) * 100);
+    return { wins, draws, losses, total, winRate, catGames };
+}
+window.getCategoryStats = getCategoryStats;
+
+// Form indicator using category-specific games (still global by default as per design)
+function getPerformanceDataForCategory(player, cat) {
+    const catGames = (games || []).filter(g => {
+        const isPlayer = (g.white === player.id || g.black === player.id ||
+                          g.white_player_id === player.id || g.black_player_id === player.id);
+        return isPlayer;  // Form remains GLOBAL across all categories
+    }).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    if (catGames.length < 3) return { state: 'neutral', label: '-', class: 'perf-neutral' };
+
+    const last5 = catGames.slice(0, 5);
+    let formScore = 0;
+    last5.forEach(g => {
+        const isWhite = (g.white === player.id || g.white_player_id === player.id);
+        if (g.result === '1/2-1/2') formScore += 0.5;
+        else if ((isWhite && g.result === '1-0') || (!isWhite && g.result === '0-1')) formScore += 1;
+    });
+    const formPct = formScore / last5.length;
+
+    if (formPct >= 0.8) return { state: 'hot', icon: '&#x1F525;', class: 'perf-hot' };
+    if (formPct >= 0.6) return {
+        state: 'up',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>',
+        class: 'perf-up'
+    };
+    if (formPct >= 0.4) return { state: 'stable', icon: '=', class: 'perf-stable' };
+    if (formPct >= 0.2) return {
+        state: 'down',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>',
+        class: 'perf-down'
+    };
+    return { state: 'cold', icon: '&#x1F976;', class: 'perf-cold' };
+}
+window.getPerformanceDataForCategory = getPerformanceDataForCategory;
+
 
 // Ensure style is dynamic for active buttons
 const style = document.createElement('style');
@@ -396,7 +496,7 @@ function updateAdminUI() {
             adminLoginBtn.style.display = '';
             adminLogoutBtn.style.display = 'none';
             if (adminEmailDisplay) adminEmailDisplay.textContent = '';
-            if (repairBtn) repairBtn.style.display = 'none';
+
         }
     }
 }
@@ -2173,9 +2273,11 @@ function renderLeaderboard() {
 
     if (tbody) tbody.innerHTML = filtered.map((player, idx) => {
         if (!player) return '';
-        const title = getTitle(getRatingForCategory(player, window.activeLeaderboardCategory));
-        const winRate = calculateWinRate(player);
-        const perf = getPerformanceData(player);
+        const cat = window.activeLeaderboardCategory;
+        const title = getTitle(getRatingForCategory(player, cat));
+        const catStats = getCategoryStats(player, cat);
+        const perf = getPerformanceDataForCategory(player, cat);
+        const displayGames = catStats.total > 0 ? catStats.total : (player?.games ?? 0);
 
         return `
             <div class="table-row fade-in" onclick="openPlayerDetail('${player?.id ?? ''}')" title="Tap for details">
@@ -2190,11 +2292,11 @@ function renderLeaderboard() {
                 ? `<span class="perf-neutral">${perf.label}</span>`
                 : `<span class="perf-icon ${perf.class}">${perf.icon}</span>`}
                         </div>
-                        <span class="rating-cell">${getRatingForCategory(player, window.activeLeaderboardCategory)}</span>
-                        <span class="mobile-hide">${getPeakRatingForCategory(player, window.activeLeaderboardCategory)}</span>
-                        <span class="mobile-hide">${player?.games ?? 0}</span>
-                        <span>${player?.wins ?? 0}-${player?.draws ?? 0}-${player?.losses ?? 0}</span>
-                        <span>${winRate}%</span>
+                        <span class="rating-cell">${getRatingForCategory(player, cat)}</span>
+                        <span class="mobile-hide">${getPeakRatingForCategory(player, cat)}</span>
+                        <span class="mobile-hide">${displayGames}</span>
+                        <span>${catStats.wins}-${catStats.draws}-${catStats.losses}</span>
+                        <span>${catStats.winRate}%</span>
                         <span class="status-badge mobile-hide ${player?.status ?? 'active'}">${player?.status ?? 'active'}</span>
             </div>
             `;
@@ -2760,6 +2862,8 @@ function renderGamesLog() {
         if (game.result === '1-0') resultClass = 'white-win';
         if (game.result === '0-1') resultClass = 'black-win';
 
+        const catLabel = game.category === 'blitz' ? '⚡ Blitz' : game.category === 'classical' ? '♟ Classical' : '🕐 Rapid';
+
         return `
             <div class="table-row fade-in" onclick = "openGameDetail('${game?.id ?? ''}')" style = "cursor: pointer;" >
                         <span class="mobile-hide">${idx + 1}</span>
@@ -2769,6 +2873,7 @@ function renderGamesLog() {
                             <span class="result-badge ${resultClass}">${formatResult(game.result)}</span>
                         </div>
                         <span>${blackName}</span>
+                        <span class="mobile-hide"><span style="font-size:11px; padding:2px 7px; border-radius:10px; font-weight:600; background: var(--bg-tertiary); color: var(--text-secondary);">${catLabel}</span></span>
                         <span class="single-line-text mobile-hide">${game.tournament || '-'}</span>
                         <span class="rating-change ${game.whiteChange >= 0 ? 'positive' : 'negative'} mobile-hide">${game.whiteChange >= 0 ? '+' : ''}${game.whiteChange}</span>
                         <span class="rating-change ${game.blackChange >= 0 ? 'positive' : 'negative'} mobile-hide">${game.blackChange >= 0 ? '+' : ''}${game.blackChange}</span>
