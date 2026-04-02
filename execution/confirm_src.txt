@@ -1,0 +1,130 @@
+function confirmGameSubmit() {
+    const modal = document.getElementById('gameConfirmModal');
+    const whiteId = modal.dataset.whiteId;
+    const blackId = modal.dataset.blackId;
+    const result = modal.dataset.result;
+    const whiteChange = parseInt(modal.dataset.whiteChange);
+    const blackChange = parseInt(modal.dataset.blackChange);
+    const whiteScore = parseFloat(modal.dataset.whiteScore);
+    const blackScore = parseFloat(modal.dataset.blackScore);
+
+    const btn = document.getElementById('confirmGameSubmitBtn');
+    const originalText = btn ? btn.textContent : 'Confirm';
+
+    // Get form values
+    const date = document.getElementById('gameDate').value;
+    const tournament = document.getElementById('gameTournament').value;
+
+    try {
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+        }
+        showLoadingModal('Saving game result...');
+
+        // Create game object for local state
+        const newGame = {
+            id: games.length + 1,
+            date,
+            white: whiteId,
+            black: blackId,
+            result,
+            tournament,
+            round: null,
+            whiteChange,
+            blackChange
+        };
+
+        // Update players
+        const whiteIdx = players.findIndex(p => p.id === whiteId);
+        const blackIdx = players.findIndex(p => p.id === blackId);
+
+        players[whiteIdx].rating += whiteChange;
+        players[blackIdx].rating += blackChange;
+        players[whiteIdx].games++;
+        players[blackIdx].games++;
+
+        if (result === '1-0') {
+            players[whiteIdx].wins++;
+            players[blackIdx].losses++;
+        } else if (result === '0-1') {
+            players[whiteIdx].losses++;
+            players[blackIdx].wins++;
+        } else {
+            players[whiteIdx].draws++;
+            players[blackIdx].draws++;
+        }
+
+        // Update peak ratings
+        if (players[whiteIdx].rating > players[whiteIdx].peakRating) {
+            players[whiteIdx].peakRating = players[whiteIdx].rating;
+        }
+        if (players[blackIdx].rating > players[blackIdx].peakRating) {
+            players[blackIdx].peakRating = players[blackIdx].rating;
+        }
+
+        // Add rating to history
+        players[whiteIdx].ratingHistory.push(players[whiteIdx].rating);
+        players[blackIdx].ratingHistory.push(players[blackIdx].rating);
+
+        // Add game to log
+        games.push(newGame);
+
+        // Sync with database
+        const updatedWhitePlayer = players[whiteIdx];
+        const updatedBlackPlayer = players[blackIdx];
+
+        const [savedGame] = await api.insertGames([{
+            date: newGame.date,
+            white_player_id: whiteId,
+            black_player_id: blackId,
+            result: newGame.result,
+            tournament_name: newGame.tournament || 'Casual',
+            round_number: 0,
+            white_rating_before: updatedWhitePlayer.rating - newGame.whiteChange,
+            black_rating_before: updatedBlackPlayer.rating - newGame.blackChange,
+            white_rating_after: updatedWhitePlayer.rating,
+            black_rating_after: updatedBlackPlayer.rating,
+            white_rating_change: newGame.whiteChange,
+            black_rating_change: newGame.blackChange,
+            white_player_name: updatedWhitePlayer.name,
+            black_player_name: updatedBlackPlayer.name
+        }]);
+
+        if (savedGame) newGame.id = savedGame.id;
+
+        await Promise.all([
+            api.updatePlayerStats(updatedWhitePlayer.id, {
+                bodija_rating: updatedWhitePlayer.rating,
+                peak_rating: updatedWhitePlayer.peakRating,
+                games_played: updatedWhitePlayer.games,
+                wins: updatedWhitePlayer.wins,
+                draws: updatedWhitePlayer.draws,
+                losses: updatedWhitePlayer.losses
+            }),
+            api.updatePlayerStats(updatedBlackPlayer.id, {
+                bodija_rating: updatedBlackPlayer.rating,
+                peak_rating: updatedBlackPlayer.peakRating,
+                games_played: updatedBlackPlayer.games,
+                wins: updatedBlackPlayer.wins,
+                draws: updatedBlackPlayer.draws,
+                losses: updatedBlackPlayer.losses
+            })
+        ]);
+
+        modal.classList.remove('active');
+        closeAddGameModal();
+        showToast('Game result saved!', 'success');
+        await silentRefresh();
+
+    } catch (e) {
+        console.error("Error saving game:", e);
+        showToast("Error saving game. Please check console.", 'error');
+    } finally {
+        hideLoadingModal();
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+}

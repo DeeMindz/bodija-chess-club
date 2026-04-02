@@ -1,0 +1,210 @@
+--- renderLeaderboard ---
+function renderLeaderboard() {
+    const tbody = document.getElementById('leaderboardBody');
+
+    if (!players || players.length === 0) {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px; color: var(--text-secondary);">No players found. Add players to the database to see them here.</td></tr>';
+        return;
+    }
+
+    // Filter out guest players
+    const nonGuestPlayers = players.filter(p => p && !p.isGuest);
+    const sorted = [...nonGuestPlayers].sort((a, b) => (b?.rating ?? 0) - (a?.rating ?? 0));
+    const searchTerm = document.getElementById('leaderboardSearch')?.value?.toLowerCase() || '';
+    const filtered = sorted.filter(p => p && (searchTerm === '' || (p.name && p.name.toLowerCase().includes(searchTerm))));
+
+    if (tbody) tbody.innerHTML = filtered.map((player, idx) => {
+        if (!player) return '';
+        const title = getTitle(player?.rating ?? 1600);
+        const winRate = calculateWinRate(player);
+        const perf = getPerformanceData(player);
+
+        return `
+            <div class="table-row fade-in" onclick="openPlayerDetail('${player?.id ?? ''}')" title="Tap for details">
+                        <span class="rank-cell">${idx + 1}</span>
+                        <div class="player-cell">
+                            <span class="title-badge ${title.class}">${title.title}</span>
+                            <span class="player-name">${player?.name ?? 'Unknown'}</span>
+                            ${_buildMedalStack(player.id, 20, 3)}
+                        </div>
+                        <div class="perf-indicator">
+                            ${perf.state === 'neutral'
+                ? `<span class="perf-neutral">${perf.label}</span>`
+                : `<span class="perf-icon ${perf.class}">${perf.icon}</span>`}
+                        </div>
+                        <span class="rating-cell">${player?.rating ?? 1600}</span>
+                        <span class="mobile-hide">${player?.peakRating ?? 1600}</span>
+                        <span class="mobile-hide">${player?.games ?? 0}</span>
+                        <span>${player?.wins ?? 0}-${player?.draws ?? 0}-${player?.losses ?? 0}</span>
+                        <span>${winRate}%</span>
+                        <span class="status-badge mobile-hide ${player?.status ?? 'active'}">${player?.status ?? 'active'}</span>
+            </div>
+            `;
+    }).join('');
+}
+
+NOT FOUND: updatePodium
+--- submitGame ---
+function submitGame(event) {
+    event.preventDefault();
+
+    const whiteId = document.getElementById('whitePlayer').value;
+    const blackId = document.getElementById('blackPlayer').value;
+    const result = document.getElementById('gameResult').value;
+    const date = document.getElementById('gameDate').value;
+    const tournament = document.getElementById('gameTournament').value;
+
+    if (!whiteId || !blackId) {
+        alert('Please select both players!');
+        return;
+    }
+
+    if (whiteId === blackId) {
+        alert('White and Black players must be different!');
+        return;
+    }
+
+    const whitePlayer = getPlayerById(whiteId);
+    const blackPlayer = getPlayerById(blackId);
+
+    // Calculate rating changes
+    let whiteScore, blackScore;
+    if (result === '1-0') {
+        whiteScore = 1;
+        blackScore = 0;
+    } else if (result === '0-1') {
+        whiteScore = 0;
+        blackScore = 1;
+    } else {
+        whiteScore = 0.5;
+        blackScore = 0.5;
+    }
+
+    const whiteElo = calculateElo(whitePlayer.rating, blackPlayer.rating, whiteScore);
+    const blackElo = calculateElo(blackPlayer.rating, whitePlayer.rating, blackScore);
+    const whiteChange = whiteElo.change;
+    const blackChange = blackElo.change;
+
+    const whiteExpected = 1 / (1 + Math.pow(10, (blackPlayer.rating - whitePlayer.rating) / 400));
+    const blackExpected = 1 / (1 + Math.pow(10, (whitePlayer.rating - blackPlayer.rating) / 400));
+
+    // Create new game
+    const newGame = {
+        id: games.length + 1,
+        date,
+        white: whiteId,
+        black: blackId,
+        result,
+        tournament,
+        round: null,
+        whiteChange,
+        blackChange
+    };
+
+    // Confirmation popup
+    const resultText = result === '1-0' ? 'White Wins' : result === '0-1' ? 'Black Wins' : 'Draw';
+    const confirmMsg = `Confirm Game Result:\n\n${whitePlayer.name} (White) vs ${blackPlayer.name} (Black)\n\nResult: ${resultText}\n\nWhite Rating: ${whitePlayer.rating} → ${whitePlayer.rating + whiteChange} (${whiteChange >= 0 ? '+' : ''}${whiteChange})\nBlack Rating: ${blackPlayer.rating} → ${blackPlayer.rating + blackChange} (${blackChange >= 0 ? '+' : ''}${blackChange})\n\nThis cannot be undone. Continue?`;
+
+    // Close the add game form and show confirmation modal
+    document.getElementById('addGameModal').classList.remove('active');
+    showGameConfirmModal(whitePlayer, blackPlayer, result, whiteChange, blackChange, whiteScore, blackScore);
+    return;
+}
+
+--- recalculateFromRound ---
+function recalculateFromRound(localTournament) {
+    if (!localTournament) return;
+
+    // Reset all players to tournament starting state
+    localTournament.players.forEach(p => {
+        p.currentRating = p.ratingAtStart;
+        p.points = 0;
+        p.wins = 0;
+        p.draws = 0;
+        p.losses = 0;
+        p.byes = 0;
+        p.colorHistory = p.colorHistory || [];
+        p.opponents = p.opponents || [];
+    });
+
+    // Replay all rounds sequentially
+    for (const round of localTournament.rounds) {
+        for (const pairing of round.pairings) {
+            const white = localTournament.players.find(p => p.id === pairing.whitePlayerId);
+            const black = localTournament.players.find(p => p.id === pairing.blackPlayerId);
+
+            // Handle bye
+            if (pairing.isBye) {
+                if (white) {
+                    pairing.whiteRatingBefore = white.currentRating;
+                    pairing.whiteRatingAfter = white.currentRating;
+                    pairing.whiteRatingChange = 0;
+                    white.points += 1;
+                    white.byes += 1;
+                }
+                continue;
+            }
+
+            if (!pairing.result || !white || !black) continue;
+
+            // Snapshot ratings before game
+            pairing.whiteRatingBefore = white.currentRating;
+            pairing.blackRatingBefore = black.currentRating;
+
+            // Track history
+            white.colorHistory.push('white');
+            black.colorHistory.push('black');
+            white.opponents.push(black.id);
+            black.opponents.push(white.id);
+
+            // Calculate ELO
+            const whiteScore = pairing.result === '1-0' ? 1
+                : pairing.result === '1/2-1/2' ? 0.5 : 0;
+            const blackScore = 1 - whiteScore;
+
+            const whiteElo = calculateElo(white.currentRating, black.currentRating, whiteScore);
+            const blackElo = calculateElo(black.currentRating, white.currentRating, blackScore);
+
+            // Update pairing
+            pairing.whiteRatingAfter = whiteElo.newRating;
+            pairing.whiteRatingChange = whiteElo.change;
+            pairing.blackRatingAfter = blackElo.newRating;
+            pairing.blackRatingChange = blackElo.change;
+
+            // Update players
+            white.currentRating = whiteElo.newRating;
+            black.currentRating = blackElo.newRating;
+            white.peakRating = Math.max(white.peakRating || white.currentRating, white.currentRating);
+            black.peakRating = Math.max(black.peakRating || black.currentRating, black.currentRating);
+
+            if (pairing.result === '1-0') {
+                white.points += 1; white.wins += 1; black.losses += 1;
+            } else if (pairing.result === '0-1') {
+                black.points += 1; black.wins += 1; white.losses += 1;
+            } else {
+                white.points += 0.5; black.points += 0.5;
+                white.draws += 1; black.draws += 1;
+            }
+        }
+    }
+
+    // Recalculate buchholz
+    localTournament.players.forEach(p => {
+        p.buchholz = (p.opponents || []).reduce((sum, oppId) => {
+            const opp = localTournament.players.find(x => x.id === oppId);
+            return sum + (opp?.points || 0);
+        }, 0);
+    });
+
+    saveLocalTournament();
+}
+
+--- calculateElo ---
+function calculateElo(playerRating, opponentRating, result) {
+    // result: 1 = win, 0.5 = draw, 0 = loss
+    const expected = 1 / (1 + Math.pow(10, (opponentRating - playerRating) / 400));
+    const K = 32;
+    const change = Math.round(K * (result - expected));
+    return { change, newRating: playerRating + change };
+}
+
