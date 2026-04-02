@@ -3,16 +3,16 @@ import { store } from './store.js';
 export function getRatingForCategory(player, cat) {
   if (!player) return 1600;
   if (cat === 'rapid') return player.rapid_rating || player.bodija_rating || 1600;
-  if (cat === 'blitz') return player.blitz_rating || 1600;
-  if (cat === 'classical') return player.classical_rating || 1600;
+  if (cat === 'blitz') return player.blitz_rating || player.bodija_rating || 1600;
+  if (cat === 'classical') return player.classical_rating || player.bodija_rating || 1600;
   return player.bodija_rating || 1600;
 }
 
 export function getPeakRatingForCategory(player, cat) {
   if (!player) return 1600;
   if (cat === 'rapid') return player.rapid_peak_rating || player.peak_rating || 1600;
-  if (cat === 'blitz') return player.blitz_peak_rating || 1600;
-  if (cat === 'classical') return player.classical_peak_rating || 1600;
+  if (cat === 'blitz') return player.blitz_peak_rating || player.peak_rating || 1600;
+  if (cat === 'classical') return player.classical_peak_rating || player.peak_rating || 1600;
   return player.peak_rating || 1600;
 }
 

@@ -5,7 +5,7 @@ export function renderTournaments() {
   const grid = document.getElementById('tournamentsGrid');
   if (!grid) return;
   const formatFilter = document.getElementById('tournamentFormatFilter')?.value || '';
-  let filtered = extendedTournaments;
+  let filtered = window.extendedTournaments || [];
   if (formatFilter) filtered = filtered.filter(t => t.format?.toLowerCase() === formatFilter.toLowerCase());
   const active = filtered.filter(t => t.status?.toLowerCase() === 'active');
   const draft = filtered.filter(t => t.status?.toLowerCase() === 'draft');
@@ -43,7 +43,7 @@ export function renderTournaments() {
 
   // Patch local tournament player count — tpCountMap has no entry until sync
   const local = window._localTournament;
-  if (local?.store.players?.length) {
+  if (local?.players?.length) {
     for (const t of active) {
       if (t.id === local.id) {
         t.playerCount = local.players.length;
