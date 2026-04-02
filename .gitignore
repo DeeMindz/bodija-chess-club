@@ -1,11 +1,38 @@
+# Dependencies
 node_modules/
-.env
-.DS_Store
-dist/
+.pnp
+.pnp.js
 
-# Documentation (not needed in production)
+# Build output
+dist/
+dist-ssr/
+.cache/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS files
+.DS_Store
+Thumbs.db
+node-windows/
+
+# Database Backups & Artifacts (CRITICAL FOR SECURITY)
+execution/*.json
+execution/*.txt
+
+# Documentation
 Gemini.md
 PROGRESS.md
 
-# Build cache
-.cache/
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Old/Leftover specific files
+replace2.cjs
