@@ -54,7 +54,7 @@ function getPerformanceDataForCategory(player, cat) {
   }).sort((a, b) => new Date(b.date) - new Date(a.date));
   if (catGames.length < 3) return {
     state: 'neutral',
-    label: '-',
+    icon: '<svg style="color: #2979FF; filter: drop-shadow(0 0 4px #2979FF);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8M8 12h8"></path></svg>',
     class: 'perf-neutral'
   };
   const last5 = catGames.slice(0, 5);

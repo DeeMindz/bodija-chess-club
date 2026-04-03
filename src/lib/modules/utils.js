@@ -1,5 +1,7 @@
 import { store } from './store.js';
 
+let _loadingModalTimeout = null;
+
 export function showLoadingModal(message = 'Saving...') {
   let modal = document.getElementById('loadingModal');
   if (!modal) {

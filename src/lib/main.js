@@ -1273,8 +1273,6 @@ function updateNotificationBadge(count) {
   });
 }
 
-// Loading Modal Functions
-let _loadingModalTimeout = null;
 // Silent refresh — refetches data and re-renders current page without any flash
 async function silentRefresh() {
   try {
@@ -5861,7 +5859,7 @@ function renderLeaderboard() {
                             ${_buildMedalStack(player.id, 20, 3)}
                         </div>
                         <div class="perf-indicator">
-                            ${perf.state === 'neutral' ? `<span class="perf-new">${perf.label}</span>` : `<span class="perf-icon ${perf.class}">${perf.icon}</span>`}
+                            <span class="perf-icon ${perf.class}">${perf.icon}</span>
                         </div>
                         <span class="rating-cell">${getRatingForCategory(player, cat)}</span>
                         <span class="mobile-hide">${getPeakRatingForCategory(player, cat)}</span>
@@ -5979,9 +5977,7 @@ function openPlayerDetail(playerId, cat) {
                     <h2 style="margin:0;">${player.name}</h2>
                     <span class="player-card-status ${player.status}">${player.status}</span>
                     <div class="perf-indicator" style="transform:scale(1.2);">
-                        ${perf.state === 'neutral'
-                            ? `<span class="perf-new">${perf.label}</span>`
-                            : `<span class="perf-icon ${perf.class}">${perf.icon}</span>`}
+                        <span class="perf-icon ${perf.class}">${perf.icon}</span>
                     </div>
                 </div>
                 <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
