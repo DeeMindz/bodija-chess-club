@@ -256,8 +256,7 @@ export async function createTournament(tournament) {
         total_rounds: tournament.total_rounds || tournament.rounds || 5,
         current_round: tournament.current_round || tournament.currentRound || 0,
         status: tournament.status || 'Draft',
-        date: tournament.date || new Date().toISOString().split('T')[0],
-        category: tournament.category || 'rapid'
+        date: tournament.date || new Date().toISOString().split('T')[0]
     };
     const { data, error } = await supabase.from('tournaments').insert([dbTournament]).select().single();
     if (error) throw error;

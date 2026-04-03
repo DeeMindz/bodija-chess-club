@@ -1425,6 +1425,7 @@ function mapTournamentFromDB(dbTournament) {
     total_rounds: dbTournament.total_rounds || 0,
     rounds: [],
     status: dbTournament.status || 'draft',
+    category: window.getCategoryFromTimeControl ? window.getCategoryFromTimeControl(dbTournament.time_control || dbTournament.timeControl || 'Rapid') : 'rapid',
     current_round: dbTournament.current_round || 0,
     players: [],
     // populated by countMap after fetch
