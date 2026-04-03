@@ -127,7 +127,8 @@ export async function fetchGames(limit = 2000) {
     let query = supabase
         .from('games')
         .select('id, date, white_player_id, black_player_id, white_player_name, black_player_name, result, white_rating_change, black_rating_change, white_rating_before, black_rating_before, tournament_name, round_number, created_at, category')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .order('round_number', { ascending: false });
     if (limit) query = query.limit(limit);
     const { data, error } = await query;
     if (error) throw error;

@@ -1957,7 +1957,7 @@ function renderRecentGames() {
     if (container) container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">No recent games. Add games to see them here.</div>';
     return;
   }
-  const recentGames = [...store.games].sort((a, b) => (b.id || 0) - (a.id || 0)).slice(0, 10);
+  const recentGames = [...store.games].sort((a, b) => (b.round || 0) - (a.round || 0) || (b.id || 0) - (a.id || 0)).slice(0, 10);
   if (container) container.innerHTML = recentGames.map(game => {
     // Use stored player names from the game record
     const whiteName = game.whiteName || 'Unknown';
@@ -6086,7 +6086,7 @@ function renderGamesLog() {
     return;
   }
   const tournamentFilter = document.getElementById('tournamentFilter').value;
-  let filtered = [...store.games].sort((a, b) => (b.id || 0) - (a.id || 0));
+  let filtered = [...store.games].sort((a, b) => (b.round || 0) - (a.round || 0) || (b.id || 0) - (a.id || 0));
   if (tournamentFilter) {
     filtered = filtered.filter(g => g.tournament === tournamentFilter);
   }
