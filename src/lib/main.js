@@ -2764,7 +2764,8 @@ async function confirmGameSubmit() {
       tournament,
       round: null,
       whiteChange,
-      blackChange
+      blackChange,
+      category
     };
 
     // Update players
@@ -2848,7 +2849,8 @@ async function confirmGameSubmit() {
       white_rating_change: newGame.whiteChange,
       black_rating_change: newGame.blackChange,
       white_player_name: updatedWhitePlayer.name,
-      black_player_name: updatedBlackPlayer.name
+      black_player_name: updatedBlackPlayer.name,
+      category: category
     }]);
     if (savedGame) newGame.id = savedGame.id;
     await Promise.all([api.updatePlayerStats(updatedWhitePlayer.id, {
@@ -3922,13 +3924,13 @@ function generateRoundLocally() {
 // ==================== ROUND ROBIN (FIDE BERGER TABLE) ====================
 
 function generateRoundRobinPairings(playersLocal, round) {
-  const n = store.players.length;
+  const n = playersLocal.length;
   if (n < 2) return [];
   const double = isDoubleRR(currentTournament.format) || currentTournament.isDoubleRoundRobin;
   const singleRounds = n % 2 === 0 ? n - 1 : n;
   const isSecondHalf = double && round > singleRounds;
   const actualRound = isSecondHalf ? round - singleRounds : round;
-  const list = [...store.players];
+  const list = [...playersLocal];
   if (list.length % 2 !== 0) list.push({
     id: 'BYE',
     name: 'BYE',
@@ -6009,7 +6011,7 @@ function openPlayerDetail(playerId, cat) {
                 <div class="player-detail-stat-label">Win Rate</div>
             </div>
             <div class="player-detail-stat">
-                <div class="player-detail-stat-value">${catStats.total > 0 ? catStats.total : (player.games ?? 0)}</div>
+                <div class="player-detail-stat-value">${catStats.total}</div>
                 <div class="player-detail-stat-label">Games</div>
             </div>
         </div>
