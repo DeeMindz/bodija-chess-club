@@ -4018,7 +4018,7 @@ function generateSwissPairings(playersLocal, round) {
   const colorHistory = getColorHistory(currentTournament);
   const pairings = [];
   const paired = new Set();
-  const sorted = [...store.players].sort((a, b) => {
+  const sorted = [...playersLocal].sort((a, b) => {
     if ((b.points || 0) !== (a.points || 0)) return (b.points || 0) - (a.points || 0);
     return (b.currentRating || b.rating || 0) - (a.currentRating || a.rating || 0);
   });
@@ -4164,7 +4164,7 @@ function generateKnockoutPairings(playersLocal, round) {
   const colorHistory = getColorHistory(currentTournament);
   const pairings = [];
   if (round === 1) {
-    const seeded = [...store.players].sort((a, b) => (b.currentRating || b.rating || 0) - (a.currentRating || a.rating || 0));
+    const seeded = [...playersLocal].sort((a, b) => (b.currentRating || b.rating || 0) - (a.currentRating || a.rating || 0));
     const N = seeded.length;
     const top = seeded.slice(0, Math.ceil(N / 2));
     const bot = seeded.slice(Math.ceil(N / 2)).reverse();
