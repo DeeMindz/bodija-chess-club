@@ -1399,6 +1399,7 @@ function mapGameFromDB(dbGame) {
   return {
     id: dbGame.id || 0,
     date: dbGame.date || dbGame.created_at || new Date().toISOString().split('T')[0],
+    created_at: dbGame.created_at || dbGame.date || new Date().toISOString(),
     white: dbGame.white_player_id,
     black: dbGame.black_player_id,
     whiteName: dbGame.white_player_name || 'Unknown',
@@ -1956,7 +1957,7 @@ function renderRecentGames() {
     if (container) container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">No recent games. Add games to see them here.</div>';
     return;
   }
-  const recentGames = [...store.games].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
+  const recentGames = [...store.games].sort((a, b) => new Date(b.created_at || b.date) - new Date(a.created_at || a.date)).slice(0, 10);
   if (container) container.innerHTML = recentGames.map(game => {
     // Use stored player names from the game record
     const whiteName = game.whiteName || 'Unknown';
@@ -6085,7 +6086,7 @@ function renderGamesLog() {
     return;
   }
   const tournamentFilter = document.getElementById('tournamentFilter').value;
-  let filtered = [...store.games].sort((a, b) => new Date(b.date) - new Date(a.date));
+  let filtered = [...store.games].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   if (tournamentFilter) {
     filtered = filtered.filter(g => g.tournament === tournamentFilter);
   }
