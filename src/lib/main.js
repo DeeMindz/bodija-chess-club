@@ -283,8 +283,8 @@ function recalculateFromRound(localTournament) {
     p.draws = 0;
     p.losses = 0;
     p.byes = 0;
-    p.colorHistory = p.colorHistory || [];
-    p.opponents = p.opponents || [];
+    p.colorHistory = [];
+    p.opponents = [];
   });
 
   // Replay all rounds sequentially

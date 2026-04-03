@@ -50,32 +50,36 @@ export // Form indicator using category-specific games (still global by default 
 function getPerformanceDataForCategory(player, cat) {
   const catGames = (store.games || []).filter(g => {
     const isPlayer = g.white === player.id || g.black === player.id || g.white_player_id === player.id || g.black_player_id === player.id;
-    return isPlayer; // Form remains GLOBAL across all categories
+    const isCat = (g.category || 'rapid') === cat;
+    return isPlayer && isCat;
   }).sort((a, b) => new Date(b.date) - new Date(a.date));
+  
   if (catGames.length < 3) return {
     state: 'neutral',
-    icon: '<svg style="color: #2979FF; filter: drop-shadow(0 0 4px #2979FF);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8M8 12h8"></path></svg>',
+    icon: '-',
     class: 'perf-neutral'
   };
+  
   const last5 = catGames.slice(0, 5);
   let formScore = 0;
   last5.forEach(g => {
     const isWhite = g.white === player.id || g.white_player_id === player.id;
-    if (g.result === '1/2-1/2') formScore += 0.5;else if (isWhite && g.result === '1-0' || !isWhite && g.result === '0-1') formScore += 1;
+    if (g.result === '1/2-1/2') formScore += 0.5;
+    else if ((isWhite && g.result === '1-0') || (!isWhite && g.result === '0-1')) formScore += 1;
   });
+  
   const formPct = formScore / last5.length;
-  if (formPct >= 0.6) return { state: 'hot', icon: '&#x1F525;', class: 'perf-hot' };
+  if (formPct >= 0.7) return { state: 'hot', icon: '&#x1F525;', class: 'perf-hot' };
   if (formPct >= 0.4) return {
-    state: 'stable',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>',
-    class: 'perf-stable'
+    state: 'up',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>',
+    class: 'perf-up'
   };
-  if (formPct >= 0.2) return {
+  return {
     state: 'down',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>',
     class: 'perf-down'
   };
-  return { state: 'cold', icon: '&#x1F976;', class: 'perf-cold' };
 }
 
 export // Calculate ELO rating change
