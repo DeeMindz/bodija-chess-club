@@ -664,27 +664,28 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Category</label>
-                        <select class="form-select" id="tournamentCategory" required>
+                        <select class="form-select" id="tournamentCategory" required onchange="filterTimeControls()">
+                            <option value="" disabled selected>Select Category</option>
                             <option value="rapid">Rapid</option>
                             <option value="blitz">Blitz</option>
                             <option value="classical">Classical</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="timeControlGroup" style="display: none;">
                         <label class="form-label">Time Control</label>
-                        <select class="form-select" id="tournamentTimeControl" onchange="toggleCustomTimeControl(this.value)">
-                            <optgroup label="⚡ Blitz">
+                        <select class="form-select" id="tournamentTimeControl" required onchange="toggleCustomTimeControl(this.value)">
+                            <optgroup label="⚡ Blitz" id="tc-blitz">
                                 <option value="Blitz (5+3)">Blitz (5+3)</option>
                                 <option value="Blitz (5+0)">Blitz (5+0)</option>
                                 <option value="Blitz (3+2)">Blitz (3+2)</option>
                             </optgroup>
-                            <optgroup label="🕐 Rapid">
+                            <optgroup label="🕐 Rapid" id="tc-rapid">
                                 <option value="Rapid (25+0)">Rapid (25+0)</option>
                                 <option value="Rapid (15+10)">Rapid (15+10)</option>
-                                <option value="Rapid (10+5)" selected>Rapid (10+5)</option>
+                                <option value="Rapid (10+5)">Rapid (10+5)</option>
                                 <option value="Rapid (10+0)">Rapid (10+0)</option>
                             </optgroup>
-                            <optgroup label="♟️ Classical">
+                            <optgroup label="♟️ Classical" id="tc-classical">
                                 <option value="Classical (90+30)">Classical (90+30)</option>
                                 <option value="Classical (60+0)">Classical (60+0)</option>
                             </optgroup>

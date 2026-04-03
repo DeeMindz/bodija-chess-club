@@ -66,6 +66,37 @@ window.toggleCustomTimeControl = function (val) {
     customInput.value = '';
   }
 };
+
+window.filterTimeControls = function() {
+  const category = document.getElementById('tournamentCategory').value;
+  const tcGroup = document.getElementById('timeControlGroup');
+  const tcSelect = document.getElementById('tournamentTimeControl');
+  
+  if (!category) {
+    tcGroup.style.display = 'none';
+    tcSelect.value = '';
+    return;
+  }
+  
+  tcGroup.style.display = 'block';
+  
+  tcSelect.querySelectorAll('optgroup').forEach(group => {
+    group.style.display = 'none';
+  });
+  
+  if (category === 'blitz') {
+    document.getElementById('tc-blitz').style.display = 'block';
+    tcSelect.value = 'Blitz (5+0)';
+  } else if (category === 'rapid') {
+    document.getElementById('tc-rapid').style.display = 'block';
+    tcSelect.value = 'Rapid (10+5)';
+  } else if (category === 'classical') {
+    document.getElementById('tc-classical').style.display = 'block';
+    tcSelect.value = 'Classical (60+0)';
+  }
+  
+  window.toggleCustomTimeControl(tcSelect.value);
+};
 window.syncCustomTimeControl = function (val) {
   // Keep custom input in sync — used when submitting the form
   // The form submit handler reads this value directly
@@ -3440,6 +3471,8 @@ function editTournament(id) {
   document.getElementById('editTournamentId').value = tournament.id;
   document.getElementById('tournamentName').value = tournament.name;
   document.getElementById('tournamentDate').value = tournament.date;
+  document.getElementById('tournamentCategory').value = tournament.category || 'rapid';
+  window.filterTimeControls();
   document.getElementById('tournamentFormat').value = tournament.format;
   document.getElementById('tournamentTimeControl').value = tournament.timeControl;
   document.getElementById('tournamentRounds').value = tournament.total_rounds || '';
