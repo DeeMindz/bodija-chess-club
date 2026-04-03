@@ -52,7 +52,7 @@ function getPerformanceDataForCategory(player, cat) {
     const isPlayer = g.white === player.id || g.black === player.id || g.white_player_id === player.id || g.black_player_id === player.id;
     const isCat = (g.category || 'rapid') === cat;
     return isPlayer && isCat;
-  }).sort((a, b) => new Date(b.created_at || b.date) - new Date(a.created_at || a.date));
+  }).sort((a, b) => (b.id || 0) - (a.id || 0));
   
   if (catGames.length < 3) return {
     state: 'neutral',
