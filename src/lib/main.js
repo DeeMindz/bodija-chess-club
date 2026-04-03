@@ -3683,7 +3683,7 @@ async function startTournament() {
     return {
       id: player.id,
       name: player.name,
-      rating: player.rating,
+      rating: getRatingForCategory(player, currentTournament.category || 'rapid'),
       points: 0,
       wins: 0,
       draws: 0,
@@ -4816,7 +4816,9 @@ function renderTournamentStandings() {
                         <span class="col-change">Rating</span>
                     </div>
                     <div class="standings-body">
-                        ${sorted.map((player, idx) => `
+                        ${sorted.map((player, idx) => {
+                            const change = Math.round((player.currentRating || player.rating) - (player.ratingAtStart || player.rating)) || player.rating_change || 0;
+                            return `
                             <div class="standings-row">
                                 <span class="col-rank" style="font-weight: 700; ${idx < 3 ? 'color: var(--accent-gold);' : ''}">${idx + 1}</span>
                                 <span class="col-player" style="font-weight: 500;">${player.name}</span>
@@ -4825,11 +4827,11 @@ function renderTournamentStandings() {
                                 <span class="col-d">${player.draws || 0}</span>
                                 <span class="col-l">${player.losses || 0}</span>
                                 <span class="col-buchholz">${formatPoints(player.buchholz)}</span>
-                                <span class="col-change rating-change ${(player.rating_change || 0) >= 0 ? 'positive' : 'negative'}" style="color: ${(player.rating_change || 0) > 0 ? 'var(--success)' : (player.rating_change || 0) < 0 ? 'var(--danger)' : 'inherit'}">
-                                    ${player.rating_change ? (player.rating_change > 0 ? '+' : '') + player.rating_change : '0'}
+                                <span class="col-change rating-change ${change >= 0 ? 'positive' : 'negative'}" style="color: ${change > 0 ? 'var(--success)' : change < 0 ? 'var(--danger)' : 'inherit'}">
+                                    ${change ? (change > 0 ? '+' : '') + change : '0'}
                                 </span>
                             </div>
-                        `).join('')}
+                        `}).join('')}
                     </div>
                 </div>
             </div>
@@ -5153,15 +5155,17 @@ async function _syncTournamentToSupabase(local) {
     // ── STEP 2: Insert rounds (idempotent — skip if already exist) ──────────
     showLoadingModal('Step 2/8: Saving rounds...');
     let savedRounds = await api.fetchRoundsForTournament(tid);
-    if (savedRounds.length === 0) {
-      const roundInserts = (local.rounds || []).map(r => ({
+    const missingRounds = (local.rounds || []).filter(r => !savedRounds.find(sr => sr.round_number === r.roundNumber));
+    if (missingRounds.length > 0) {
+      const roundInserts = missingRounds.map(r => ({
         tournament_id: tid,
         round_number: r.roundNumber,
         status: 'Completed'
       }));
-      savedRounds = await api.insertRounds(roundInserts);
+      const newRounds = await api.insertRounds(roundInserts);
+      savedRounds = [...savedRounds, ...newRounds];
     } else {
-      console.log('[Sync] Rounds already exist, skipping');
+      console.log('[Sync] All rounds already exist, skipping round creation');
     }
     const roundIdMap = {};
     savedRounds.forEach(r => {
