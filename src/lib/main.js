@@ -10,7 +10,6 @@ window.hideLoadingModal = utils.hideLoadingModal;
 window.getInitials = utils.getInitials;
 window._compressImageToBlob = utils._compressImageToBlob;
 window._compressImage = utils._compressImage;
-window.resetPlayersRatings = utils.resetPlayersRatings;
 window.calculateWinRate = playerstats.calculateWinRate;
 window.calculateHeadToHead = playerstats.calculateHeadToHead;
 window.getPerformanceData = playerstats.getPerformanceData;
@@ -80,20 +79,41 @@ window.filterTimeControls = function() {
   
   tcGroup.style.display = 'block';
   
-  tcSelect.querySelectorAll('optgroup').forEach(group => {
-    group.style.display = 'none';
-  });
+  tcSelect.innerHTML = ''; // Clear everything completely
   
   if (category === 'blitz') {
-    document.getElementById('tc-blitz').style.display = 'block';
-    tcSelect.value = 'Blitz (5+0)';
+    tcSelect.innerHTML += `
+      <optgroup label="⚡ Blitz">
+        <option value="Blitz (5+3)">Blitz (5+3)</option>
+        <option value="Blitz (5+0)">Blitz (5+0)</option>
+        <option value="Blitz (3+2)">Blitz (3+2)</option>
+      </optgroup>
+    `;
   } else if (category === 'rapid') {
-    document.getElementById('tc-rapid').style.display = 'block';
-    tcSelect.value = 'Rapid (10+5)';
+    tcSelect.innerHTML += `
+      <optgroup label="🕐 Rapid">
+        <option value="Rapid (25+0)">Rapid (25+0)</option>
+        <option value="Rapid (15+10)">Rapid (15+10)</option>
+        <option value="Rapid (10+5)">Rapid (10+5)</option>
+        <option value="Rapid (10+0)">Rapid (10+0)</option>
+      </optgroup>
+    `;
   } else if (category === 'classical') {
-    document.getElementById('tc-classical').style.display = 'block';
-    tcSelect.value = 'Classical (60+0)';
+    tcSelect.innerHTML += `
+      <optgroup label="♟️ Classical">
+        <option value="Classical (90+30)">Classical (90+30)</option>
+        <option value="Classical (60+0)">Classical (60+0)</option>
+      </optgroup>
+    `;
   }
+  
+  // Custom option at the very bottom strictly as instructed
+  tcSelect.innerHTML += `<option value="custom">✏️ Custom...</option>`;
+  
+  // Set default selection natively
+  if (category === 'blitz') tcSelect.value = 'Blitz (5+0)';
+  if (category === 'rapid') tcSelect.value = 'Rapid (10+5)';
+  if (category === 'classical') tcSelect.value = 'Classical (60+0)';
   
   window.toggleCustomTimeControl(tcSelect.value);
 };
@@ -3060,10 +3080,11 @@ function showTournamentStartPreview() {
       console.warn('[BCC] Player not found for id:', id);
       return null;
     }
+    const cat = currentTournament?.category || 'rapid';
     return {
       id: p.id,
       name: p.name,
-      rating: p.rating || p.bodija_rating || 1600,
+      rating: getRatingForCategory(p, cat) || 1600,
       isGuest: p.isGuest || p.is_guest || false
     };
   }).filter(Boolean);
@@ -3605,12 +3626,16 @@ async function saveTournamentPlayers(silent = false) {
       btn.disabled = true;
       btn.textContent = 'Saving...';
     }
+    const tCat = currentTournament?.category || 'rapid';
     const playersToSave = selectedPlayers.map(id => {
       const p = store.players.find(player => player.id === id);
+      const catRating = getRatingForCategory(p, tCat) || 1600;
       return {
         id: p.id,
         name: p.name,
-        rating: p.rating || p.bodija_rating,
+        rating: catRating,
+        ratingAtStart: catRating,
+        currentRating: catRating,
         points: 0,
         wins: 0,
         draws: 0,
@@ -3650,7 +3675,7 @@ function renderPlayerCards() {
                             <div class="player-select-name">${player.name}</div>
                             ${player.isGuest || player.is_guest ? '<span class="badge-guest" style="background: var(--purple); color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600;">GUEST</span>' : ''}
                         </div>
-                        <div class="player-select-rating">Rating: ${player.rating || player.bodija_rating}</div>
+                        <div class="player-select-rating">Rating: ${getRatingForCategory(player, currentTournament?.category || 'rapid')}</div>
                     </div>
                 </div>
         `).join('');
@@ -3725,10 +3750,13 @@ async function startTournament() {
       console.warn('[BCC] Player not found for id:', id);
       return null;
     }
+    const catRating = getRatingForCategory(player, currentTournament.category || 'rapid');
     return {
       id: player.id,
       name: player.name,
-      rating: getRatingForCategory(player, currentTournament.category || 'rapid'),
+      rating: catRating,
+      ratingAtStart: catRating,
+      currentRating: catRating,
       points: 0,
       wins: 0,
       draws: 0,
@@ -3763,17 +3791,31 @@ async function startTournament() {
     await api.addTournamentPlayers(currentTournament.id, currentTournament.players);
 
     // Create Round 1 record first
-    const round1 = await api.createRound({
+    const [round1] = await api.insertRounds([{
       tournament_id: currentTournament.id,
       round_number: 1,
       status: 'Pending'
-    });
+    }]);
     if (round1) {
       currentTournament.pairings = currentTournament.pairings.map(p => ({
         ...p,
         roundId: round1.id
       }));
-      const dbPairings = await api.addRoundPairings(currentTournament.id, currentTournament.pairings);
+      const dbPairingPayload = currentTournament.pairings.map(lp => ({
+            tournament_id: currentTournament.id,
+            round_id: round1.id,
+            white_player_id: lp.white,
+            black_player_id: lp.black,
+            result: lp.result || '',
+            white_rating_before: lp.whiteRatingBefore || 1600,
+            black_rating_before: lp.blackRatingBefore || 1600,
+            white_rating_after: lp.whiteRatingAfter || 1600,
+            black_rating_after: lp.blackRatingAfter || 1600,
+            white_rating_change: lp.whiteRatingChange || 0,
+            black_rating_change: lp.blackRatingChange || 0,
+            is_bye: lp.isBye || false
+      }));
+      const dbPairings = await api.insertPairings(dbPairingPayload);
       if (dbPairings && Array.isArray(dbPairings)) {
         // Sync back database IDs to local pairings
         currentTournament.pairings = dbPairings.map(dbp => {
@@ -3785,9 +3827,6 @@ async function startTournament() {
           };
         });
       }
-    } else {
-      // Fallback for Round 1
-      await api.addRoundPairings(currentTournament.id, currentTournament.pairings);
     }
   } catch (e) {
     console.warn("[BCC] Tournament DB sync failed, using local fallback:", e);
