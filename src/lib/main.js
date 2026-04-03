@@ -1409,7 +1409,8 @@ function mapGameFromDB(dbGame) {
     whiteChange: dbGame.white_rating_change || 0,
     blackChange: dbGame.black_rating_change || 0,
     whiteRatingBefore: dbGame.white_rating_before || null,
-    blackRatingBefore: dbGame.black_rating_before || null
+    blackRatingBefore: dbGame.black_rating_before || null,
+    category: dbGame.category || 'rapid'
   };
 }
 function mapTournamentFromDB(dbTournament) {
@@ -5939,7 +5940,7 @@ function openPlayerDetail(playerId, cat) {
     const catStats = getCategoryStats(player, cat);
     const winRate = catStats.winRate;
     const perf = getPerformanceDataForCategory(player, cat);
-    const h2h = calculateHeadToHead(playerId);
+    const h2h = calculateHeadToHead(playerId, cat);
     const content = document.getElementById('playerDetailContent');
 
     const avatarInner = player.photo
@@ -6046,11 +6047,24 @@ function openPlayerDetail(playerId, cat) {
         </div>
     `;
 
-    setTimeout(async () => {
+    setTimeout(() => {
         try {
-            const history = await api.fetchPlayerRatingHistory(player.id);
-            if (history && history.length > 0) {
-                const series = [history[0].rating_before, ...history.map(h => h.rating_after)];
+            const catGames = (store.games || [])
+                .filter(g => (g.category || 'rapid') === cat && (g.white === player.id || g.black === player.id))
+                .sort((a, b) => a.id - b.id); // Sort chronologically by sequential ID
+
+            if (catGames.length > 0) {
+                const series = [];
+                const firstGame = catGames[0];
+                let current = (firstGame.white === player.id ? firstGame.whiteRatingBefore : firstGame.blackRatingBefore) || 1600;
+                
+                series.push(current); // Starting rating point
+                
+                catGames.forEach(g => {
+                    const change = g.white === player.id ? g.whiteChange : g.blackChange;
+                    current += change;
+                    series.push(current);
+                });
                 renderRatingChart(series);
             } else {
                 renderRatingChart([getRatingForCategory(player, cat)]);
