@@ -562,6 +562,14 @@
                         <input type="date" class="form-input game-date-input" id="gameDate" required>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="gameCategory" required>
+                            <option value="rapid" selected>Rapid</option>
+                            <option value="blitz">Blitz</option>
+                            <option value="classical">Classical</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Tournament (optional)</label>
                         <input type="text" class="form-input" id="gameTournament" placeholder="Tournament name">
                     </div>
@@ -579,14 +587,6 @@
                     </select>
                 </div>
                 <div class="form-row">
-                    <div class="form-group" style="flex: 1;">
-                        <label class="form-label">Category</label>
-                        <select class="form-select" id="gameCategory" required>
-                            <option value="rapid" selected>Rapid</option>
-                            <option value="blitz">Blitz</option>
-                            <option value="classical">Classical</option>
-                        </select>
-                    </div>
                     <div class="form-group" style="flex: 1;">
                         <label class="form-label">Result</label>
                         <select class="form-select" id="gameResult" required>
@@ -661,6 +661,14 @@
                     <div class="form-group tournament-date-group">
                         <label class="form-label">Date</label>
                         <input type="date" class="form-input tournament-date-input" id="tournamentDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="tournamentCategory" required>
+                            <option value="rapid">Rapid</option>
+                            <option value="blitz">Blitz</option>
+                            <option value="classical">Classical</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Time Control</label>

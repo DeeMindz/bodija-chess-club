@@ -2628,6 +2628,8 @@ async function submitGame(event) {
   const result = document.getElementById('gameResult').value;
   const date = document.getElementById('gameDate').value;
   const tournament = document.getElementById('gameTournament').value;
+  const manualCategory = document.getElementById('manualGameCategory')?.value || 'rapid';
+
   if (!whiteId || !blackId) {
     alert('Please select both players!');
     return;
@@ -2869,8 +2871,14 @@ async function confirmGameSubmit() {
       draws: updatedWhitePlayer.draws,
       losses: updatedWhitePlayer.losses
     }), api.updatePlayerStats(updatedBlackPlayer.id, {
-      bodija_rating: updatedBlackPlayer.rating,
-      peak_rating: updatedBlackPlayer.peakRating,
+      bodija_rating: updatedBlackPlayer.bodija_rating || updatedBlackPlayer.rapid_rating || 1600,
+      peak_rating: updatedBlackPlayer.peakRating || updatedBlackPlayer.rapid_peak_rating || 1600,
+      rapid_rating: updatedBlackPlayer.rapid_rating || updatedBlackPlayer.bodija_rating || 1600,
+      rapid_peak_rating: updatedBlackPlayer.rapid_peak_rating || updatedBlackPlayer.peakRating || 1600,
+      blitz_rating: updatedBlackPlayer.blitz_rating || 1600,
+      blitz_peak_rating: updatedBlackPlayer.blitz_peak_rating || 1600,
+      classical_rating: updatedBlackPlayer.classical_rating || 1600,
+      classical_peak_rating: updatedBlackPlayer.classical_peak_rating || 1600,
       games_played: updatedBlackPlayer.games,
       wins: updatedBlackPlayer.wins,
       draws: updatedBlackPlayer.draws,
@@ -3313,6 +3321,7 @@ async function submitTournament(e) {
   const editId = document.getElementById('editTournamentId').value;
   const name = document.getElementById('tournamentName').value;
   const date = document.getElementById('tournamentDate').value;
+  const category = document.getElementById('tournamentCategory')?.value || 'rapid';
   const format = document.getElementById('tournamentFormat').value;
   const timeControl = document.getElementById('tournamentTimeControl').value;
   let rounds = parseInt(document.getElementById('tournamentRounds').value) || 5;
@@ -3368,7 +3377,7 @@ async function submitTournament(e) {
           date,
           format,
           timeControl,
-          category: window.getCategoryFromTimeControl ? window.getCategoryFromTimeControl(timeControl) : (timeControl.toLowerCase().includes('blitz') ? 'blitz' : timeControl.toLowerCase().includes('classical') ? 'classical' : 'rapid'),
+          category: category,
           rounds,
           total_rounds: rounds,
           // needed so confirmStartTournament reads it correctly
@@ -3391,7 +3400,7 @@ async function submitTournament(e) {
           rounds,
           status: 'Draft',
           current_round: 0,
-          category: window.getCategoryFromTimeControl ? window.getCategoryFromTimeControl(timeControl) : (timeControl.toLowerCase().includes('blitz') ? 'blitz' : timeControl.toLowerCase().includes('classical') ? 'classical' : 'rapid')
+          category: category
         });
         if (dbTourney) {
           newTournament.id = dbTourney.id; // Sync local ID with DB
