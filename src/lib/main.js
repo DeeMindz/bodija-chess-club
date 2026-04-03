@@ -5214,7 +5214,8 @@ async function _syncTournamentToSupabase(local) {
         white_rating_after: p.whiteRatingAfter || p.whiteRatingBefore || 1600,
         black_rating_after: p.blackRatingAfter || p.blackRatingBefore || 1600,
         white_rating_change: p.whiteRatingChange || 0,
-        black_rating_change: p.blackRatingChange || 0
+        black_rating_change: p.blackRatingChange || 0,
+        category: local.category || 'rapid'
       }));
       if (gameInserts.length > 0) {
         insertedGames = await api.insertGames(gameInserts);
@@ -5284,14 +5285,27 @@ async function _syncTournamentToSupabase(local) {
       const globalPlayer = store.players.find(x => x.id === p.id);
       const peakRating = Math.max(newRating, globalPlayer?.peakRating || 0, p.ratingAtStart || 1600);
       try {
-        await api.updatePlayerStats(p.id, {
-          bodija_rating: newRating,
-          peak_rating: peakRating,
+        const payload = {
           wins: globalWins,
           draws: globalDraws,
           losses: globalLosses,
           games_played: myGames.length
-        });
+        };
+        const cat = local.category || 'rapid';
+        if (cat === 'rapid') {
+          payload.rapid_rating = newRating;
+          payload.rapid_peak_rating = peakRating;
+          payload.bodija_rating = newRating;
+          payload.peak_rating = peakRating;
+        } else if (cat === 'blitz') {
+          payload.blitz_rating = newRating;
+          payload.blitz_peak_rating = Math.max(newRating, globalPlayer?.blitz_peak_rating || 0, p.ratingAtStart || 1600);
+        } else if (cat === 'classical') {
+          payload.classical_rating = newRating;
+          payload.classical_peak_rating = Math.max(newRating, globalPlayer?.classical_peak_rating || 0, p.ratingAtStart || 1600);
+        }
+        
+        await api.updatePlayerStats(p.id, payload);
       } catch (e) {
         console.warn('[Sync] Player update failed for', p.name, e.message);
       }
