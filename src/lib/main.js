@@ -216,7 +216,7 @@ function showRecoveryBanner(local) {
   const timeText = minutesAgo < 1 ? 'just now' : `${minutesAgo} min ago`;
   const banner = document.createElement('div');
   banner.id = 'recoveryBanner';
-  banner.style.cssText = 'position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1c2128;border:1.5px solid #F0A500;border-radius:12px;padding:14px 18px;z-index:99999;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.6);max-width:480px;width:calc(100% - 32px);flex-wrap:wrap;';
+  banner.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1c2128;border:1.5px solid #F0A500;border-radius:12px;padding:14px 18px;z-index:99999;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.6);max-width:480px;width:calc(100% - 32px);flex-wrap:wrap;';
   banner.innerHTML = `
         <div style="flex:1;min-width:0;">
             <div style="color:#F0A500;font-weight:600;font-size:14px;">&#x1F504; Unfinished Tournament</div>
@@ -1476,7 +1476,7 @@ function mapTournamentFromDB(dbTournament) {
     total_rounds: dbTournament.total_rounds || 0,
     rounds: [],
     status: dbTournament.status || 'draft',
-    category: window.getCategoryFromTimeControl ? window.getCategoryFromTimeControl(dbTournament.time_control || dbTournament.timeControl || 'Rapid') : 'rapid',
+    category: dbTournament.category || (window.getCategoryFromTimeControl ? window.getCategoryFromTimeControl(dbTournament.time_control || dbTournament.timeControl || 'Rapid') : 'rapid'),
     current_round: dbTournament.current_round || 0,
     players: [],
     // populated by countMap after fetch
@@ -5192,8 +5192,8 @@ async function confirmRoundSubmit() {
             white_player_id: p.white,
             black_player_id: p.isBye ? null : p.black,
             result: null,
-            white_rating_before: window._localTournament?.store.players?.find(x => x.id === p.white)?.currentRating || 1600,
-            black_rating_before: p.isBye ? null : window._localTournament?.store.players?.find(x => x.id === p.black)?.currentRating || 1600,
+            white_rating_before: (window._localTournament?.players || []).find(x => x.id === p.white)?.currentRating || 1600,
+            black_rating_before: p.isBye ? null : (window._localTournament?.players || []).find(x => x.id === p.black)?.currentRating || 1600,
             white_rating_after: null,
             black_rating_after: null,
             white_rating_change: null,
