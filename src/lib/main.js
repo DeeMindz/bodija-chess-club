@@ -5222,6 +5222,7 @@ async function confirmRoundSubmit() {
 async function _syncTournamentToSupabase(local) {
   const tid = local.id;
   if (!tid) throw new Error('No tournament ID');
+  console.log(`[Sync] Starting finalisation — tournament: "${local.name}", category: ${local.category || '(missing — will default to rapid)'}, id: ${tid}`);
 
   // Safety net — always hide loading modal after 30s no matter what
   const _safetyTimer = setTimeout(() => {

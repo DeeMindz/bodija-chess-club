@@ -216,7 +216,7 @@ export async function fetchTournaments() {
     guard();
     const { data, error } = await supabase
         .from('tournaments')
-        .select('id, name, format, time_control, total_rounds, current_round, status, date')
+        .select('id, name, format, time_control, total_rounds, current_round, status, date, category')
         .order('date', { ascending: false });
     if (error) throw error;
     return data || [];
@@ -240,7 +240,7 @@ export async function fetchTournamentById(id) {
     guard();
     const { data, error } = await supabase
         .from('tournaments')
-        .select('id, name, format, time_control, total_rounds, current_round, status, date')
+        .select('id, name, format, time_control, total_rounds, current_round, status, date, category')
         .eq('id', id)
         .single();
     if (error) throw error;
