@@ -3367,6 +3367,7 @@ async function submitTournament(e) {
           date,
           format,
           timeControl,
+          category: window.getCategoryFromTimeControl ? window.getCategoryFromTimeControl(timeControl) : (timeControl.toLowerCase().includes('blitz') ? 'blitz' : timeControl.toLowerCase().includes('classical') ? 'classical' : 'rapid'),
           rounds,
           total_rounds: rounds,
           // needed so confirmStartTournament reads it correctly
@@ -3388,7 +3389,8 @@ async function submitTournament(e) {
           timeControl,
           rounds,
           status: 'Draft',
-          current_round: 0
+          current_round: 0,
+          category: window.getCategoryFromTimeControl ? window.getCategoryFromTimeControl(timeControl) : (timeControl.toLowerCase().includes('blitz') ? 'blitz' : timeControl.toLowerCase().includes('classical') ? 'classical' : 'rapid')
         });
         if (dbTourney) {
           newTournament.id = dbTourney.id; // Sync local ID with DB
