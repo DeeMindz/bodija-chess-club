@@ -60,14 +60,15 @@ function getPerformanceDataForCategory(player, cat) {
     class: 'perf-neutral'
   };
   
+  const last5 = catGames.slice(0, 5);
   let formScore = 0;
-  catGames.forEach(g => {
+  last5.forEach(g => {
     const isWhite = g.white === player.id || g.white_player_id === player.id;
     if (g.result === '1/2-1/2') formScore += 0.5;
     else if ((isWhite && g.result === '1-0') || (!isWhite && g.result === '0-1')) formScore += 1;
   });
   
-  const formPct = formScore / catGames.length;
+  const formPct = formScore / last5.length;
   if (formPct >= 0.7) return { state: 'hot', icon: '&#x1F525;', class: 'perf-hot' };
   if (formPct >= 0.4) return {
     state: 'up',

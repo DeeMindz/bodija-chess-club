@@ -5850,7 +5850,7 @@ function renderLeaderboard() {
     const title = getTitle(player.rapid_rating || player.bodija_rating || 1600);
     const catStats = getCategoryStats(player, cat);
     const perf = getPerformanceDataForCategory(player, cat);
-    const displayGames = catStats.total > 0 ? catStats.total : player.games ?? 0;
+    const displayGames = catStats.total;
     return `
             <div class="table-row fade-in" onclick="openPlayerDetail('${player?.id ?? ''}')" title="Tap for details">
                         <span class="rank-cell">${idx + 1}</span>
