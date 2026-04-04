@@ -122,7 +122,7 @@ export async function getAllPlayerIds() {
 // GAMES
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function fetchGames(limit = 2000) {
+export async function fetchGames(limit = 20, offset = 0) {
     guard();
     let query = supabase
         .from('games')
@@ -130,6 +130,7 @@ export async function fetchGames(limit = 2000) {
         .order('created_at', { ascending: false })
         .order('round_number', { ascending: false });
     if (limit) query = query.limit(limit);
+    if (offset > 0) query = query.range(offset, offset + limit - 1);
     const { data, error } = await query;
     if (error) throw error;
     return data || [];
@@ -142,6 +143,17 @@ export async function fetchGameResultsForPlayers(playerIds) {
         .from('games')
         .select('white_player_id, black_player_id, result')
         .or(playerIds.map(id => `white_player_id.eq.${id},black_player_id.eq.${id}`).join(','));
+    if (error) throw error;
+    return data || [];
+}
+
+export async function fetchH2HGames(p1id, p2id) {
+    guard();
+    const { data, error } = await supabase
+        .from('games')
+        .select('id, date, white_player_id, black_player_id, white_player_name, black_player_name, result, white_rating_change, black_rating_change, white_rating_before, black_rating_before, tournament_name, round_number, created_at, category')
+        .or(`and(white_player_id.eq.${p1id},black_player_id.eq.${p2id}),and(white_player_id.eq.${p2id},black_player_id.eq.${p1id})`)
+        .order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
 }
@@ -225,13 +237,13 @@ export async function fetchTournaments() {
 export async function fetchTournamentPlayerCounts() {
     guard();
     const { data, error } = await supabase
-        .from('tournament_players')
-        .select('tournament_id, player_id');
+        .from('tournament_participant_counts')
+        .select('tournament_id, participant_count');
     if (error) throw error;
     // Return a map of tournamentId → count
     const countMap = {};
     (data || []).forEach(row => {
-        if (row.tournament_id) countMap[row.tournament_id] = (countMap[row.tournament_id] || 0) + 1;
+        if (row.tournament_id) countMap[row.tournament_id] = row.participant_count;
     });
     return countMap;
 }
@@ -757,41 +769,21 @@ export async function fetchPlayerMedals(playerId) {
 // Used to populate the cache on startup — single query instead of N+1.
 export async function fetchAllPlayersMedals() {
     guard();
-    // Fetch all tournament_players rows for completed tournaments, with tournament info
     const { data, error } = await supabase
-        .from('tournament_players')
-        .select('player_id, points, wins, rating_change, tournament_id, tournaments(id, name, date, format, status)')
-        .not('tournaments', 'is', null);
+        .from('player_medals_view')
+        .select('*');
     if (error) throw error;
 
-    // Group rows by tournament_id to compute positions
-    const byTournament = {};
-    for (const row of (data || [])) {
-        const t = row.tournaments;
-        if (!t || t.status !== 'Completed') continue;
-        if (!byTournament[t.id]) byTournament[t.id] = { tournament: t, rows: [] };
-        byTournament[t.id].rows.push(row);
-    }
-
-    // Build medals map
     const medalsMap = {};
-    for (const { tournament: t, rows } of Object.values(byTournament)) {
-        // Sort by points desc to get standings
-        const sorted = [...rows].sort((a, b) => (b.points || 0) - (a.points || 0));
-        sorted.forEach((row, idx) => {
-            const position = idx + 1;
-            if (position > 3) return;
-            if (!medalsMap[row.player_id]) medalsMap[row.player_id] = [];
-            medalsMap[row.player_id].push({
-                tournamentId: t.id,
-                tournamentName: t.name,
-                date: t.date,
-                format: t.format,
-                position,
-                points: row.points || 0,
-                wins: row.wins || 0,
-                ratingChange: row.rating_change || 0,
-            });
+    for (const row of (data || [])) {
+        if (!medalsMap[row.player_id]) medalsMap[row.player_id] = [];
+        medalsMap[row.player_id].push({
+            tournamentId: row.tournament_id,
+            tournamentName: row.tournament_name,
+            date: row.tournament_date,
+            format: row.tournament_format,
+            position: row.position,
+            points: row.points || 0
         });
     }
 

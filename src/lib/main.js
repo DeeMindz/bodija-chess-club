@@ -2449,23 +2449,27 @@ function compareFromMobile() {
   h2hActiveFilter = 'all';
   renderH2HContent(p1id, p2id);
 }
-function switchH2HFilter(filter, p1id, p2id) {
+async function switchH2HFilter(filter, p1id, p2id) {
   h2hActiveFilter = filter;
-  renderH2HContent(p1id, p2id);
+  await renderH2HContent(p1id, p2id);
 }
-function renderH2HContent(p1id, p2id) {
+async function renderH2HContent(p1id, p2id) {
   const container = document.getElementById('h2hContent');
+  if (container) container.innerHTML = '<div style="padding: 40px; text-align: center;"><div class="loading-spinner"></div></div>';
+  
   const p1 = getPlayerById(p1id);
   const p2 = getPlayerById(p2id);
 
-  // Find all games between these two players
-  let h2hGames = store.games.filter(g => g.white === p1id && g.black === p2id || g.white === p2id && g.black === p1id);
+  // Find all games between these two players from DB directly to bypass pagination
+  try {
+    const rawData = await api.fetchH2HGames(p1id, p2id);
+    let h2hGames = rawData.map(mapGameFromDB).filter(g => Boolean(g));
 
-  // Classify each game
-  h2hGames = h2hGames.map(g => ({
-    ...g,
-    tc: getGameTimeControl(g)
-  }));
+    // Classify each game
+    h2hGames = h2hGames.map(g => ({
+      ...g,
+      tc: getGameTimeControl(g)
+    }));
 
   // Count by category for tab badges
   const counts = {
@@ -2602,6 +2606,10 @@ function renderH2HContent(p1id, p2id) {
             `}
         </div>
     `;
+  } catch (e) {
+    console.error('Failed to load H2H games:', e);
+    if (container) container.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--error);">Error loading data.</div>';
+  }
 }
 function openGameDetail(gameId) {
   const game = store.games.find(g => g.id == gameId);
@@ -6181,6 +6189,30 @@ function openPlayerDetail(playerId, cat) {
 }
 
 // ==================== UI-GAMES (inlined) ====================
+
+window.gamesOffset = 20;
+
+window.loadMoreGames = async function () {
+  const btn = document.getElementById('loadMoreGamesBtn');
+  if (btn) btn.innerHTML = 'Loading...';
+  try {
+      const moreGames = await api.fetchGames(20, window.gamesOffset);
+      if (moreGames.length > 0) {
+          const mapped = moreGames.map(mapGameFromDB).filter(g => g !== null);
+          store.games = [...store.games, ...mapped];
+          window.gamesOffset += moreGames.length;
+          renderGamesLog();
+      } else {
+          if (btn) btn.innerHTML = 'No more games';
+          if (btn) btn.disabled = true;
+          return;
+      }
+  } catch (e) {
+      console.error(e);
+      if (btn) btn.innerHTML = 'Error loading games';
+  }
+  if (btn) btn.innerHTML = 'Load Next 20 Games';
+};
 
 function renderGamesLog() {
   const container = document.getElementById('gamesLogBody');
