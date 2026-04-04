@@ -201,44 +201,46 @@
             <div class="page-content">
                 <div class="dashboard-grid">
                     <!-- Podium 3-card layered deck: depth visible at TOP, flat at bottom -->
-                    <div style="position: relative; padding-top: 26px;">
+                    <div class="podium-wrapper" style="position: relative; padding-top: 28px; width: 100%; grid-column: 1 / -1;">
 
                         <!-- Deepest card (card 3) — narrowest, peeks most at top -->
                         <div id="podiumPeek2" style="
                             position: absolute; top: 0; bottom: 0;
-                            left: 14px; right: 14px;
-                            background: var(--bg-secondary);
+                            left: 20px; right: 20px;
+                            background: var(--bg-tertiary);
                             border-radius: 18px;
-                            border-top: 3px solid #10b981;
+                            border-top: 1px solid rgba(240,165,0,0.3);
                             z-index: 1;
                             display: flex; align-items: flex-start; justify-content: flex-end;
-                            padding: 7px 14px 0;
+                            padding: 6px 16px 0;
+                            opacity: 0.8;
                         ">
-                            <span id="podiumPeek2Label" style="font-size: 10px; font-weight: 700; color: #10b981; opacity: 0.85;"></span>
+                            <span id="podiumPeek2Label" style="font-size: 10px; font-weight: 600; color: rgba(240,165,0,0.6);"></span>
                         </div>
 
                         <!-- Middle card (card 2) — slightly narrower, peeks in between -->
                         <div id="podiumPeek1" style="
-                            position: absolute; top: 12px; bottom: 0;
-                            left: 7px; right: 7px;
-                            background: var(--bg-secondary);
+                            position: absolute; top: 14px; bottom: 0;
+                            left: 10px; right: 10px;
+                            background: var(--bg-tertiary);
                             border-radius: 18px;
-                            border-top: 3px solid #3b82f6;
+                            border-top: 1px solid rgba(240,165,0,0.6);
                             z-index: 2;
                             display: flex; align-items: flex-start; justify-content: flex-end;
-                            padding: 7px 14px 0;
+                            padding: 6px 16px 0;
                         ">
-                            <span id="podiumPeek1Label" style="font-size: 10px; font-weight: 700; color: #3b82f6; opacity: 0.85;"></span>
+                            <span id="podiumPeek1Label" style="font-size: 11px; font-weight: 600; color: rgba(240,165,0,0.8);"></span>
                         </div>
 
                         <!-- Front card: full-width, the active podium-container -->
                         <div id="podiumCardFront" class="podium-container" style="
                             position: relative; z-index: 3;
-                            border-top: 3px solid #f0a500;
+                            border-top: 2px solid rgba(240,165,0,1);
+                            background: var(--bg-secondary);
+                            opacity: 1;
                             cursor: pointer;
                             user-select: none;
                             -webkit-tap-highlight-color: transparent;
-                            transition: opacity 0.35s ease;
                         ">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                 <h3 class="podium-title" style="margin-bottom: 0;">🏆 Top Players</h3>

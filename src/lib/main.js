@@ -1962,39 +1962,30 @@ function _deckLabel(idx) {
 
 function _updateDeckLabels() {
   const front = document.getElementById('podiumFrontLabel');
-  const frontCard = document.getElementById('podiumCardFront');
   
   const peek1 = document.getElementById('podiumPeek1Label');
-  const peek1Card = document.getElementById('podiumPeek1');
-
   const peek2 = document.getElementById('podiumPeek2Label');
-  const peek2Card = document.getElementById('podiumPeek2');
 
   const cat0 = _deckLabel(_deckIndex);
   const cat1 = _deckLabel(_deckIndex + 1);
   const cat2 = _deckLabel(_deckIndex + 2);
 
-  // Front card
+  // Front card label
   if (front) {
     front.textContent = cat0.label;
     front.style.color = cat0.color;
     front.style.background = cat0.bg;
   }
-  if (frontCard) frontCard.style.borderTopColor = cat0.color;
 
-  // Middle peek (1 layer behind)
+  // Middle peek
   if (peek1) {
     peek1.textContent = cat1.label;
-    peek1.style.color = cat1.color;
   }
-  if (peek1Card) peek1Card.style.borderTopColor = cat1.color;
 
-  // Deepest peek (2 layers behind)
+  // Deepest peek
   if (peek2) {
     peek2.textContent = cat2.label;
-    peek2.style.color = cat2.color;
   }
-  if (peek2Card) peek2Card.style.borderTopColor = cat2.color;
 }
 
 function _advanceDeck() {
@@ -2004,21 +1995,33 @@ function _advanceDeck() {
   const frontCard = document.getElementById('podiumCardFront');
   if (!frontCard) { _deckAnimating = false; return; }
 
-  // Fade out
+  // Slide down leaving animation
+  frontCard.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease';
+  frontCard.style.transform = 'translateY(80px)';
   frontCard.style.opacity = '0';
 
   setTimeout(() => {
-    // Advance index and re-render
+    // Advance index and re-render while hidden
     _deckIndex = (_deckIndex + 1) % _deckCategories.length;
     const activeCat = _deckLabel(_deckIndex).key;
     window.activeLeaderboardCategory = activeCat;
     renderPodium(activeCat);
     _updateDeckLabels();
 
-    // Fade back in
+    // Snap back to top instantly, without animation
+    frontCard.style.transition = 'none';
+    frontCard.style.transform = 'translateY(0)';
+    frontCard.style.opacity = '0';
+
+    // Force reflow
+    void frontCard.offsetHeight;
+
+    // Fade back in smoothly
+    frontCard.style.transition = 'opacity 0.4s ease';
     frontCard.style.opacity = '1';
+
     setTimeout(() => { _deckAnimating = false; }, 400);
-  }, 350);
+  }, 450);
 }
 
 function _resetDeckTimer() {
