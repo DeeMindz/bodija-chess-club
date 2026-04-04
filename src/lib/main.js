@@ -6211,7 +6211,7 @@ window.loadMoreGames = async function () {
       console.error(e);
       if (btn) btn.innerHTML = 'Error loading games';
   }
-  if (btn) btn.innerHTML = 'Load Next 20 Games';
+  if (btn) btn.innerHTML = 'Load More';
 };
 
 function renderGamesLog() {
