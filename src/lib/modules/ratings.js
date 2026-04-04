@@ -20,6 +20,11 @@ export function getPeakRatingForCategory(player, cat) {
 
 export // Get category-specific WDL stats from the games array
 function getCategoryStats(player, cat) {
+  // Use optimal server aggregated WDL first, handles pagination loss issue
+  if (store.wdlCache && store.wdlCache[player.id] && store.wdlCache[player.id][cat]) {
+    return { ...store.wdlCache[player.id][cat], catGames: [] };
+  }
+
   const catGames = (store.games || []).filter(g => {
     const isPlayer = g.white === player.id || g.black === player.id || g.white_player_id === player.id || g.black_player_id === player.id;
     if (!isPlayer) return false;

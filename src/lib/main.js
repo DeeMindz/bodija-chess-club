@@ -1607,6 +1607,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderPlayers();
       } catch (e) {}
     }).catch(e => console.warn('Medals initial load failed:', e));
+    
+    // WDL cache from View (non-blocking)
+    if (typeof api.fetchAllPlayerWDLStats === 'function') {
+      api.fetchAllPlayerWDLStats().then(wdl => {
+        if (wdl) {
+          store.wdlCache = wdl;
+          try {
+            renderLeaderboard();
+            renderPlayers();
+          } catch(e) {}
+        }
+      });
+    }
+
   }).catch(e => {
     console.error('[BCC] Background fetch error:', e);
     _dataReady = true; // allow navigation even if tournaments failed

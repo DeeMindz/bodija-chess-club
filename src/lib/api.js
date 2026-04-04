@@ -177,6 +177,34 @@ export async function fetchPlayerGameStats(playerIds) {
     return stats;
 }
 
+// Optimized: fetch All Players WDL Stats by category simultaneously from SQL view.
+// This allows the Leaderboard to instantly display accurate total wins, losses, and draws
+// without needing to download arrays of thousands of game histories to the client.
+export async function fetchAllPlayerWDLStats() {
+    guard();
+    try {
+        const { data, error } = await supabase.from('player_category_stats_view').select('*');
+        if (error) {
+            // Fails silently if user hasn't run optimize_views.sql yet
+            return null;
+        }
+        const map = {};
+        for (const row of data || []) {
+            if (!map[row.player_id]) map[row.player_id] = {};
+            map[row.player_id][row.category] = {
+                wins: row.wins,
+                draws: row.draws,
+                losses: row.losses,
+                total: row.total,
+                winRate: row.total === 0 ? 0 : Math.round(((row.wins + (row.draws * 0.5)) / row.total) * 100)
+            };
+        }
+        return map;
+    } catch (e) {
+        return null;
+    }
+}
+
 export async function fetchH2HGames(p1id, p2id) {
     guard();
     const { data, error } = await supabase

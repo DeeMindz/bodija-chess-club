@@ -36,3 +36,24 @@ WHERE position <= 3;
 -- Make sure API users can read the generated views
 GRANT SELECT ON tournament_participant_counts TO anon, authenticated;
 GRANT SELECT ON player_medals_view TO anon, authenticated;
+
+-- 3. Player Category WDL Stats
+-- Prevents downloading thousands of games just to count W/D/L on the leaderboard
+CREATE OR REPLACE VIEW player_category_stats_view AS
+SELECT 
+    player_id, 
+    COALESCE(category, 'rapid') as category,
+    SUM(CASE WHEN result = '1-0' AND is_white = true THEN 1
+             WHEN result = '0-1' AND is_white = false THEN 1 ELSE 0 END) as wins,
+    SUM(CASE WHEN result = '1/2-1/2' THEN 1 ELSE 0 END) as draws,
+    SUM(CASE WHEN result = '0-1' AND is_white = true THEN 1
+             WHEN result = '1-0' AND is_white = false THEN 1 ELSE 0 END) as losses,
+    COUNT(*) as total
+FROM (
+    SELECT white_player_id as player_id, true as is_white, category, result FROM games
+    UNION ALL
+    SELECT black_player_id as player_id, false as is_white, category, result FROM games
+) sub
+GROUP BY player_id, COALESCE(category, 'rapid');
+
+GRANT SELECT ON player_category_stats_view TO anon, authenticated;
