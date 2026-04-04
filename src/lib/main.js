@@ -1948,9 +1948,9 @@ function renderPodium(cat) {
 
 // =================== PODIUM CARD DECK ===================
 const _deckCategories = [
-  { key: 'rapid',     label: '⏱ Rapid',      color: '#f0a500', bg: 'rgba(240,165,0,0.12)' },
-  { key: 'blitz',     label: '⚡ Blitz',      color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' },
-  { key: 'classical', label: '♟ Classical', color: '#10b981', bg: 'rgba(16,185,129,0.12)' }
+  { key: 'rapid',     label: '⏱ Rapid' },
+  { key: 'blitz',     label: '⚡ Blitz' },
+  { key: 'classical', label: '♟ Classical' }
 ];
 let _deckIndex = 0;
 let _deckTimer = null;
@@ -1973,8 +1973,6 @@ function _updateDeckLabels() {
   // Front card label
   if (front) {
     front.textContent = cat0.label;
-    front.style.color = cat0.color;
-    front.style.background = cat0.bg;
   }
 
   // Middle peek
@@ -1995,9 +1993,9 @@ function _advanceDeck() {
   const frontCard = document.getElementById('podiumCardFront');
   if (!frontCard) { _deckAnimating = false; return; }
 
-  // Slide down leaving animation
-  frontCard.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease';
-  frontCard.style.transform = 'translateY(80px)';
+  // Slide down leaving animation (Slower & Smoother)
+  frontCard.style.transition = 'transform 0.75s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease';
+  frontCard.style.transform = 'translateY(120px)';
   frontCard.style.opacity = '0';
 
   setTimeout(() => {
@@ -2017,16 +2015,16 @@ function _advanceDeck() {
     void frontCard.offsetHeight;
 
     // Fade back in smoothly
-    frontCard.style.transition = 'opacity 0.4s ease';
+    frontCard.style.transition = 'opacity 0.6s ease';
     frontCard.style.opacity = '1';
 
-    setTimeout(() => { _deckAnimating = false; }, 400);
-  }, 450);
+    setTimeout(() => { _deckAnimating = false; }, 650);
+  }, 700);
 }
 
 function _resetDeckTimer() {
   if (_deckTimer) clearInterval(_deckTimer);
-  _deckTimer = setInterval(_advanceDeck, 5000);
+  _deckTimer = setInterval(_advanceDeck, 7000);
 }
 
 window.initPodiumDeck = function () {
