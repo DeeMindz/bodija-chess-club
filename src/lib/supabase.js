@@ -9,12 +9,7 @@ export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey &&
     supabaseUrl !== 'your_project_url_here' &&
     supabaseAnonKey !== 'your_anon_key_here')
 
-console.log('[BCC] Supabase config check:');
-console.log('[BCC] - URL set:', !!supabaseUrl);
-console.log('[BCC] - Key set:', !!supabaseAnonKey);
-console.log('[BCC] - URL valid:', supabaseUrl !== 'your_project_url_here');
-console.log('[BCC] - Key valid:', supabaseAnonKey !== 'your_anon_key_here');
-console.log('[BCC] - Fully configured:', isSupabaseConfigured);
+
 
 if (!isSupabaseConfigured) {
     console.error('[BCC] ❌ Supabase credentials not configured! Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file');
@@ -22,7 +17,7 @@ if (!isSupabaseConfigured) {
     console.error('[BCC] VITE_SUPABASE_URL=https://your-project.supabase.co');
     console.error('[BCC] VITE_SUPABASE_ANON_KEY=your-anon-key-here');
 } else {
-    console.log('[BCC] ✓ Supabase credentials configured');
+
 }
 
 // Only create client if credentials are configured

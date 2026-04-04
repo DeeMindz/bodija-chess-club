@@ -396,7 +396,7 @@ export async function insertPairings(pairingRows) {
 // Idempotent — safe to call multiple times for the same round.
 export async function syncRoundToDb(tournamentId, roundNumber, pairingRows, standingsRows) {
     guard();
-    console.log(`[syncRoundToDb] Starting sync — tournament: ${tournamentId}, round: ${roundNumber}, pairings: ${pairingRows?.length}`);
+
 
     // ── Step 1: Get or create the round row ──────────────────────────────────
     let roundId = null;
@@ -488,7 +488,7 @@ export async function insertRatingHistory(rows) {
             .eq('tournament_id', tournamentId)
             .limit(1);
         if (existing && existing.length > 0) {
-            console.log('[API] Rating history already exists for tournament, skipping');
+
             return;
         }
     }

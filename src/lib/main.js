@@ -1493,23 +1493,23 @@ window._splashStart = Date.now();
 document.addEventListener('DOMContentLoaded', async () => {
   await checkAuthSession();
   initAuthListener();
-  console.log('[BCC] App initializing...');
+
 
   // Check for local tournament FIRST - restore it but don't skip data fetch
   const localTournament = checkForLocalTournament();
   if (localTournament) {
-    console.log('[BCC] Recovered local tournament:', localTournament.name);
+
     window._localTournament = localTournament;
     currentTournament = localTournament;
     currentTournament.status = 'Active';
     currentTournamentTab = 'pairings';
     currentViewingRound = localTournament.current_round || 1;
-    console.log('[BCC] Tournament recovered - will show after data loads');
+
     // Do NOT return here — continue to fetch all data normally
   }
 
   // Check Supabase configuration
-  console.log('[BCC] Supabase client:', supabase ? 'initialized' : 'NOT INITIALIZED (check credentials)');
+
   if (!supabase) {
     console.error('[BCC] FATAL: Supabase client is null. Please check:');
     console.error('[BCC] 1. Create .env file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
@@ -1518,7 +1518,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.body.innerHTML = '<div style="padding:50px;text-align:center;"><h1>⚠️¸ï¸ App Not Configured</h1><p>Supabase credentials missing. Check console for details.</p></div>';
     return;
   }
-  console.log('[BCC] Fetching data from database...');
+
 
   // ── Phase 1: show skeletons IMMEDIATELY so user sees layout at once ─────
   showDashboardSkeleton();
@@ -1529,11 +1529,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ── Phase 2: fetch dashboard data first (players + games) ─────────────
   try {
-    console.log('[BCC] Phase 1 — fetching dashboard data...');
+
     const [playersRaw, gamesRaw] = await Promise.all([api.fetchPlayers(), api.fetchGames()]);
     store.players = playersRaw.map(mapPlayerFromDB).filter(p => p !== null);
     store.games = gamesRaw.map(mapGameFromDB).filter(g => g !== null);
-    console.log('[BCC] Dashboard data ready — players:', store.players.length, 'games:', store.games.length);
+
 
     // Render dashboard immediately with real data
     try {
@@ -1562,7 +1562,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
     _dataReady = true;
-    console.log('[BCC] All data ready — tournaments:', extendedTournaments.length);
+
 
     // Re-render stats with tournament counts, and all background sections
     try {
@@ -3315,7 +3315,7 @@ async function confirmStartTournament() {
     hideLoadingModal();
     try {
       await api.syncRoundToDb(saved.id, 1, round1PairingRows, round1Standings);
-      console.log('[Start] Round 1 synced to DB successfully');
+
     } catch (e) {
       console.error('[Start] Round 1 DB sync failed:', e?.message || e, e);
       showToast('Round 1 saved locally. Viewer sync failed — check console.', 'warning');
@@ -4002,11 +4002,7 @@ function generateRoundLocally() {
     window._localTournament.pairings = currentTournament.pairings;
     saveLocalTournament();
   }
-  console.log('Generated round locally:', {
-    round: currentRound,
-    pairingCount: pairings.length,
-    format
-  });
+
 }
 
 // ==================== ROUND ROBIN (FIDE BERGER TABLE) ====================
@@ -5252,7 +5248,7 @@ async function _syncTournamentToSupabase(local) {
       const newRounds = await api.insertRounds(roundInserts);
       savedRounds = [...savedRounds, ...newRounds];
     } else {
-      console.log('[Sync] All rounds already exist, skipping round creation');
+
     }
     const roundIdMap = {};
     savedRounds.forEach(r => {
@@ -5312,7 +5308,7 @@ async function _syncTournamentToSupabase(local) {
         insertedGames = await api.insertGames(gameInserts);
       }
     } else {
-      console.log('[Sync] Games already exist, skipping');
+
     }
 
     // ── STEP 5: Insert rating_history ────────────────────────────────────────
