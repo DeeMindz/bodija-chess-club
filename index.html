@@ -200,47 +200,43 @@
             </div>
             <div class="page-content">
                 <div class="dashboard-grid">
-                    <div class="podium-container" style="position: relative;">
-                        <!-- Card Deck: 2 visible cards, loops Rapid → Blitz → Classical -->
-                        <div id="podiumDeck" style="position: relative; height: 260px; overflow: visible;">
-                            <!-- Back card (peek) -->
-                            <div id="podiumCardBack" style="
-                                position: absolute; bottom: 0; left: 0; right: 0;
-                                height: 230px;
-                                background: var(--bg-secondary);
-                                border-radius: 18px;
-                                border: 1px solid var(--border);
-                                padding: 14px 16px 0;
-                                z-index: 1;
-                                display: flex; align-items: flex-start; justify-content: space-between;
-                            ">
-                                <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">🏆 Top Players</span>
-                                <span id="podiumBackLabel" style="font-size: 11px; font-weight: 700; color: var(--accent-gold); padding: 2px 8px; background: rgba(240,165,0,0.12); border-radius: 20px;"></span>
+                    <!-- Podium Card with Shadow-card layer behind it -->
+                    <div style="position: relative; padding-bottom: 12px;">
+                        <!-- Shadow / peek card behind (next category) -->
+                        <div id="podiumCardBack" style="
+                            position: absolute;
+                            bottom: 0; left: 6px; right: 6px;
+                            background: var(--bg-tertiary);
+                            border-radius: 18px;
+                            border: 1px solid var(--border);
+                            height: 48px;
+                            z-index: 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: flex-end;
+                            padding: 0 16px;
+                        ">
+                            <span id="podiumBackLabel" style="font-size: 11px; font-weight: 700; color: var(--text-secondary); opacity: 0.7;"></span>
+                        </div>
+                        <!-- Front card (the real podium-container) -->
+                        <div id="podiumCardFront" class="podium-container" style="
+                            position: relative; z-index: 1;
+                            cursor: pointer;
+                            user-select: none;
+                            -webkit-tap-highlight-color: transparent;
+                            transition: opacity 0.35s ease;
+                        ">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h3 class="podium-title" style="margin-bottom: 0;">🏆 Top Players</h3>
+                                <span id="podiumFrontLabel" style="font-size: 11px; font-weight: 700; color: var(--accent-gold); padding: 3px 10px; background: rgba(240,165,0,0.12); border-radius: 20px;"></span>
                             </div>
-                            <!-- Front card (active) -->
-                            <div id="podiumCardFront" style="
-                                position: absolute; top: 0; left: 0; right: 0;
-                                height: 240px;
-                                background: var(--bg-secondary);
-                                border-radius: 18px;
-                                border: 1px solid var(--border);
-                                padding: 14px 16px;
-                                z-index: 2;
-                                transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
-                                cursor: pointer;
-                                user-select: none;
-                                -webkit-tap-highlight-color: transparent;
-                                overflow: hidden;
-                            ">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">🏆 Top Players</span>
-                                    <span id="podiumFrontLabel" style="font-size: 11px; font-weight: 700; color: var(--accent-gold); padding: 2px 8px; background: rgba(240,165,0,0.12); border-radius: 20px;"></span>
-                                </div>
-                                <div class="podium" id="podium"></div>
+                            <div class="podium" id="podium">
+                                <!-- Podium will be rendered here -->
                             </div>
                         </div>
                     </div>
-                    <!-- /podium-container -->
+                    <!-- /podium card -->
+
                     <div class="stats-container">
                         <h3 class="stats-title">Club Statistics</h3>
                         <div class="stat-item">

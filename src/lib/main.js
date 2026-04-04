@@ -1975,36 +1975,21 @@ function _advanceDeck() {
   const frontCard = document.getElementById('podiumCardFront');
   if (!frontCard) { _deckAnimating = false; return; }
 
-  // Slide front card downward off screen
-  frontCard.style.transition = 'transform 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.45s ease';
-  frontCard.style.transform = 'translateY(110%)';
-  frontCard.style.opacity   = '0';
+  // Fade out
+  frontCard.style.opacity = '0';
 
   setTimeout(() => {
-    // Advance category index
+    // Advance index and re-render
     _deckIndex = (_deckIndex + 1) % _deckCategories.length;
     const activeCat = _deckLabel(_deckIndex).key;
     window.activeLeaderboardCategory = activeCat;
-
-    // Re-render podium content for new active category
     renderPodium(activeCat);
     _updateDeckLabels();
 
-    // Snap card back to top instantly (no anim), then fade in
-    frontCard.style.transition = 'none';
-    frontCard.style.transform  = 'translateY(0)';
-    frontCard.style.opacity    = '0';
-
-    // Trigger reflow so transition doesn't merge
-    void frontCard.offsetHeight;
-
-    frontCard.style.transition = 'opacity 0.35s ease';
-    frontCard.style.opacity    = '1';
-
-    setTimeout(() => {
-      _deckAnimating = false;
-    }, 380);
-  }, 500);
+    // Fade back in
+    frontCard.style.opacity = '1';
+    setTimeout(() => { _deckAnimating = false; }, 400);
+  }, 350);
 }
 
 function _resetDeckTimer() {
