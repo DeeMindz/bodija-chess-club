@@ -6229,10 +6229,42 @@ function closeGameDetailModal() {
 function populatePlayerSelects() {
   const whiteSelect = document.getElementById('whitePlayer');
   const blackSelect = document.getElementById('blackPlayer');
-  const options = store.players.map(p => `<option value = "${p.id}" > ${p.name} (${p.rating})</option > `).join('');
-  if (whiteSelect) whiteSelect.innerHTML = `<option value = "" > Select White Player</option > ${options} `;
-  if (blackSelect) blackSelect.innerHTML = `<option value = "" > Select Black Player</option > ${options} `;
+  if (!whiteSelect || !blackSelect) return;
+
+  const category = document.getElementById('gameCategory')?.value || 'rapid';
+  const whiteVal = whiteSelect.value;
+  const blackVal = blackSelect.value;
+
+  const optionsHTML = store.players.map(p => {
+    const rating = getRatingForCategory(p, category) || 1600;
+    return `<option value="${p.id}">${p.name} (${rating})</option>`;
+  }).join('');
+
+  whiteSelect.innerHTML = `<option value="">Select White Player</option>${optionsHTML}`;
+  blackSelect.innerHTML = `<option value="">Select Black Player</option>${optionsHTML}`;
+
+  if (whiteVal) whiteSelect.value = whiteVal;
+  if (blackVal) blackSelect.value = blackVal;
+  
+  if (window.syncPlayerSelects) window.syncPlayerSelects();
 }
+
+window.syncPlayerSelects = function () {
+  const whiteSelect = document.getElementById('whitePlayer');
+  const blackSelect = document.getElementById('blackPlayer');
+  if (!whiteSelect || !blackSelect) return;
+
+  const whiteVal = whiteSelect.value;
+  const blackVal = blackSelect.value;
+
+  Array.from(whiteSelect.options).forEach(opt => {
+    opt.disabled = (opt.value !== "" && opt.value === blackVal);
+  });
+
+  Array.from(blackSelect.options).forEach(opt => {
+    opt.disabled = (opt.value !== "" && opt.value === whiteVal);
+  });
+};
 
 function closeAddGameModal() {
   document.getElementById('addGameModal').classList.remove('active');

@@ -563,7 +563,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Category</label>
-                        <select class="form-select" id="gameCategory" required>
+                        <select class="form-select" id="gameCategory" onchange="populatePlayerSelects()" required>
                             <option value="rapid" selected>Rapid</option>
                             <option value="blitz">Blitz</option>
                             <option value="classical">Classical</option>
@@ -576,13 +576,13 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">White Player</label>
-                    <select class="form-select" id="whitePlayer" required>
+                    <select class="form-select" id="whitePlayer" onchange="window.syncPlayerSelects()" required>
                         <option value="">Select White Player</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Black Player</label>
-                    <select class="form-select" id="blackPlayer" required>
+                    <select class="form-select" id="blackPlayer" onchange="window.syncPlayerSelects()" required>
                         <option value="">Select Black Player</option>
                     </select>
                 </div>
