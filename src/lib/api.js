@@ -206,6 +206,30 @@ export async function fetchAllPlayerWDLStats() {
     }
 }
 
+// Download a complete chronological history of games for a specific player.
+// Used inside Player Profile Modal to build accurate H2H and rating graphs without blowing up payload size.
+export async function fetchGamesForPlayer(playerId, category = null) {
+    guard();
+    let query = supabase
+        .from('games')
+        .select('*')
+        .or(`white_player_id.eq.${playerId},black_player_id.eq.${playerId}`);
+    
+    if (category && category !== 'all') {
+        query = query.eq('category', category);
+    }
+    
+    // Sort chronologically for accurate rating chart plotting
+    query = query.order('id', { ascending: true });
+
+    const { data, error } = await query;
+    if (error) {
+        console.warn('Failed to fetch player games:', error);
+        return [];
+    }
+    return data || [];
+}
+
 export async function fetchH2HGames(p1id, p2id) {
     guard();
     const { data, error } = await supabase

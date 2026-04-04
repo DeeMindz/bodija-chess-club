@@ -6282,32 +6282,54 @@ function openPlayerDetail(playerId, cat) {
         </div>
     `;
 
-    setTimeout(() => {
+    setTimeout(async () => {
         try {
-            const catGames = (store.games || [])
-                .filter(g => (g.category || 'rapid') === cat && (g.white === player.id || g.black === player.id))
+            // Fetch comprehensive history from Database natively (fixes paginated limit truncation)
+            const fullGames = await api.fetchGamesForPlayer(player.id, cat);
+            
+            const catGames = fullGames
+                .filter(g => g.white === player.id || g.black === player.id)
                 .sort((a, b) => a.id - b.id); // Sort chronologically by sequential ID
 
+            // 1. Redraw Rating Chart with 100% History
             if (catGames.length > 0) {
                 const series = [];
                 const firstGame = catGames[0];
-                let current = (firstGame.white === player.id ? firstGame.whiteRatingBefore : firstGame.blackRatingBefore) || 1600;
+                let current = (firstGame.white === player.id ? firstGame.whiteRatingBefore : firstGame.blackRatingBefore) || getRatingForCategory(player, cat);
                 
                 series.push(current); // Starting rating point
                 
                 catGames.forEach(g => {
                     const change = g.white === player.id ? g.whiteChange : g.blackChange;
-                    current += change;
+                    current += (change || 0);
                     series.push(current);
                 });
                 renderRatingChart(series);
             } else {
                 renderRatingChart([getRatingForCategory(player, cat)]);
             }
+
+            // 2. Refresh H2H fully from backend data
+            const fullH2H = calculateHeadToHead(player.id, cat, fullGames);
+            const h2hContainer = document.querySelector('#playerDetailContent .h2h-list');
+            if (h2hContainer) {
+                h2hContainer.innerHTML = fullH2H.map(opponent => `
+                    <div class="h2h-item fade-in">
+                        <span class="h2h-name">${opponent.name}</span>
+                        <span class="h2h-record">
+                            <span class="h2h-wins">${opponent.wins}W</span> -
+                            <span class="h2h-draws">${opponent.draws}D</span> -
+                            <span class="h2h-losses">${opponent.losses}L</span>
+                        </span>
+                    </div>
+                `).join('') || '<div style="text-align:center;color:var(--text-secondary);font-size:13px;">No opponent history found.</div>';
+            }
+
         } catch (e) {
+            console.error('Failed to parse full history chart:', e);
             renderRatingChart([getRatingForCategory(player, cat)]);
         }
-    }, 100);
+    }, 50);
     document.getElementById('playerDetailModal').classList.add('active');
 }
 

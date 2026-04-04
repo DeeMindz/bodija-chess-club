@@ -82,9 +82,10 @@ export function getPerformanceData(player) {
 
 // ==================== RATING CALCULATION ====================
 
-export function calculateHeadToHead(playerId, cat = 'rapid') {
+export function calculateHeadToHead(playerId, cat = 'rapid', fetchedGames = null) {
   const h2h = {};
-  const catGames = store.games.filter(g => (g.category || 'rapid') === cat);
+  const sourceGames = fetchedGames || store.games || [];
+  const catGames = sourceGames.filter(g => (g.category || 'rapid') === cat);
   catGames.forEach(game => {
     let opponentId = null;
     let result = null;
