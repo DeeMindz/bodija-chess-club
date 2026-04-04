@@ -6285,7 +6285,8 @@ function openPlayerDetail(playerId, cat) {
     setTimeout(async () => {
         try {
             // Fetch comprehensive history from Database natively (fixes paginated limit truncation)
-            const fullGames = await api.fetchGamesForPlayer(player.id, cat);
+            const rawGames = await api.fetchGamesForPlayer(player.id, cat);
+            const fullGames = rawGames.map(mapGameFromDB).filter(g => g !== null);
             
             const catGames = fullGames
                 .filter(g => g.white === player.id || g.black === player.id)
