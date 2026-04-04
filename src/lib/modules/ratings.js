@@ -53,6 +53,31 @@ function getCategoryStats(player, cat) {
 
 export // Form indicator using category-specific games (still global by default as per design)
 function getPerformanceDataForCategory(player, cat) {
+  // Use optimal server aggregated form string first (solves pagination issue)
+  if (store.wdlCache && store.wdlCache[player.id] && store.wdlCache[player.id][cat]) {
+    const fs = store.wdlCache[player.id][cat].formString;
+    if (!fs || fs.length < 3) return { state: 'neutral', icon: '-', class: 'perf-neutral' };
+    
+    let formScore = 0;
+    for (let i = 0; i < fs.length; i++) {
+        if (fs[i] === 'W') formScore += 1;
+        else if (fs[i] === 'D') formScore += 0.5;
+    }
+    const formPct = formScore / fs.length;
+    if (formPct >= 0.7) return { state: 'hot', icon: '&#x1F525;', class: 'perf-hot' };
+    if (formPct >= 0.4) return {
+      state: 'up',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>',
+      class: 'perf-up'
+    };
+    return {
+      state: 'down',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>',
+      class: 'perf-down'
+    };
+  }
+
+  // Fallback to local memory aggregation if view hasn't been created yet
   const catGames = (store.games || []).filter(g => {
     const isPlayer = g.white === player.id || g.black === player.id || g.white_player_id === player.id || g.black_player_id === player.id;
     const isCat = (g.category || 'rapid') === cat;

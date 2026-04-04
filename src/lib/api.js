@@ -196,7 +196,8 @@ export async function fetchAllPlayerWDLStats() {
                 draws: row.draws,
                 losses: row.losses,
                 total: row.total,
-                winRate: row.total === 0 ? 0 : Math.round(((row.wins + (row.draws * 0.5)) / row.total) * 100)
+                winRate: row.total === 0 ? 0 : Math.round(((row.wins + (row.draws * 0.5)) / row.total) * 100),
+                formString: row.form_string || ''
             };
         }
         return map;
