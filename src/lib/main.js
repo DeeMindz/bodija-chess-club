@@ -3190,6 +3190,7 @@ async function confirmStartTournament() {
       // Will be set after Supabase insert
       name: currentTournament.name,
       format: currentTournament.format,
+      category: currentTournament.category || 'rapid',
       time_control: currentTournament.timeControl || currentTournament.time_control,
       total_rounds: _totalRounds,
       current_round: 0,
@@ -3403,6 +3404,7 @@ async function submitTournament(e) {
           date,
           format,
           timeControl,
+          category,
           rounds,
           isDoubleRoundRobin
         };
@@ -3411,6 +3413,7 @@ async function submitTournament(e) {
           date,
           format,
           time_control: timeControl,
+          category: category,
           total_rounds: rounds
         });
       }
