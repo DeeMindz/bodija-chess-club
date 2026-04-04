@@ -1540,6 +1540,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderDashboard();
       _fadeIn('podium');
       _fadeIn('recentGames');
+      // Init the animated card deck after data is ready
+      if (typeof window.initPodiumDeck === 'function') window.initPodiumDeck();
     } catch (e) {
       console.error('renderDashboard failed:', e);
     }
@@ -1917,8 +1919,8 @@ function renderDashboard() {
   renderStats();
   renderRecentGames();
 }
-function renderPodium() {
-  const cat = document.getElementById('podiumCategory')?.value || 'rapid';
+function renderPodium(cat) {
+  cat = cat || window.activeLeaderboardCategory || 'rapid';
   const nonGuestPlayers = store.players.filter(p => !p.isGuest);
   const sorted = [...nonGuestPlayers].sort((a, b) => getRatingForCategory(b, cat) - getRatingForCategory(a, cat)).slice(0, 3);
   const podium = document.getElementById('podium');
@@ -1943,6 +1945,101 @@ function renderPodium() {
             `;
   }).join('');
 }
+
+// =================== PODIUM CARD DECK ===================
+const _deckCategories = [
+  { key: 'rapid',     label: '⏱ Rapid' },
+  { key: 'blitz',     label: '⚡ Blitz' },
+  { key: 'classical', label: '♟ Classical' },
+];
+let _deckIndex = 0;
+let _deckTimer = null;
+let _deckAnimating = false;
+
+function _deckLabel(idx) {
+  return _deckCategories[(idx + _deckCategories.length) % _deckCategories.length];
+}
+
+function _updateDeckLabels() {
+  const front = document.getElementById('podiumFrontLabel');
+  const back  = document.getElementById('podiumBackLabel');
+  const nextCat = _deckLabel(_deckIndex + 1);
+  if (front) front.textContent = _deckLabel(_deckIndex).label;
+  if (back)  back.textContent  = nextCat.label;
+}
+
+function _advanceDeck() {
+  if (_deckAnimating) return;
+  _deckAnimating = true;
+
+  const frontCard = document.getElementById('podiumCardFront');
+  if (!frontCard) { _deckAnimating = false; return; }
+
+  // Slide front card downward off screen
+  frontCard.style.transition = 'transform 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.45s ease';
+  frontCard.style.transform = 'translateY(110%)';
+  frontCard.style.opacity   = '0';
+
+  setTimeout(() => {
+    // Advance category index
+    _deckIndex = (_deckIndex + 1) % _deckCategories.length;
+    const activeCat = _deckLabel(_deckIndex).key;
+    window.activeLeaderboardCategory = activeCat;
+
+    // Re-render podium content for new active category
+    renderPodium(activeCat);
+    _updateDeckLabels();
+
+    // Snap card back to top instantly (no anim), then fade in
+    frontCard.style.transition = 'none';
+    frontCard.style.transform  = 'translateY(0)';
+    frontCard.style.opacity    = '0';
+
+    // Trigger reflow so transition doesn't merge
+    void frontCard.offsetHeight;
+
+    frontCard.style.transition = 'opacity 0.35s ease';
+    frontCard.style.opacity    = '1';
+
+    setTimeout(() => {
+      _deckAnimating = false;
+    }, 380);
+  }, 500);
+}
+
+function _resetDeckTimer() {
+  if (_deckTimer) clearInterval(_deckTimer);
+  _deckTimer = setInterval(_advanceDeck, 5000);
+}
+
+window.initPodiumDeck = function () {
+  const frontCard = document.getElementById('podiumCardFront');
+  if (!frontCard) return;
+
+  // Render initial state
+  _deckIndex = 0;
+  window.activeLeaderboardCategory = 'rapid';
+  renderPodium('rapid');
+  _updateDeckLabels();
+
+  // Click/tap to advance manually
+  frontCard.addEventListener('click', () => {
+    _advanceDeck();
+    _resetDeckTimer();
+  });
+
+  // Touch swipe down to advance
+  let _touchStartY = 0;
+  frontCard.addEventListener('touchstart', e => { _touchStartY = e.touches[0].clientY; }, { passive: true });
+  frontCard.addEventListener('touchend', e => {
+    const dy = e.changedTouches[0].clientY - _touchStartY;
+    if (dy > 40) { _advanceDeck(); _resetDeckTimer(); }
+  }, { passive: true });
+
+  // Auto-slide every 5 seconds
+  _resetDeckTimer();
+};
+
 function renderStats() {
   const totalMembers = document.getElementById('totalMembers');
   if (totalMembers) totalMembers.textContent = store.players.length;
