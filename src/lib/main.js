@@ -2526,12 +2526,12 @@ async function renderH2HContent(p1id, p2id) {
             <div style="display: flex; justify-content: center; align-items: center; gap: 16px; margin-bottom: 20px;">
                 <div style="text-align: center;">
                     <div style="font-size: 20px; font-weight: 700; color: var(--text-primary);">${p1.name}</div>
-                    <div style="font-size: 12px; color: var(--text-secondary);">Rating: ${p1.rating}</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Rating: ${h2hActiveFilter === 'all' ? (p1.bodija_rating || p1.rating) : (getRatingForCategory(p1, h2hActiveFilter) || p1.rating)}</div>
                 </div>
                 <div style="font-size: 16px; font-weight: 700; color: var(--accent-gold); padding: 6px 14px; background: rgba(255,215,0,0.1); border-radius: 8px;">VS</div>
                 <div style="text-align: center;">
                     <div style="font-size: 20px; font-weight: 700; color: var(--text-primary);">${p2.name}</div>
-                    <div style="font-size: 12px; color: var(--text-secondary);">Rating: ${p2.rating}</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Rating: ${h2hActiveFilter === 'all' ? (p2.bodija_rating || p2.rating) : (getRatingForCategory(p2, h2hActiveFilter) || p2.rating)}</div>
                 </div>
             </div>
 
