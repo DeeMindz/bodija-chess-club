@@ -5225,7 +5225,6 @@ async function confirmRoundSubmit() {
 async function _syncTournamentToSupabase(local) {
   const tid = local.id;
   if (!tid) throw new Error('No tournament ID');
-  console.log(`[Sync] Starting finalisation — tournament: "${local.name}", category: ${local.category || '(missing — will default to rapid)'}, id: ${tid}`);
 
   // Safety net — always hide loading modal after 30s no matter what
   const _safetyTimer = setTimeout(() => {
@@ -5396,7 +5395,6 @@ async function _syncTournamentToSupabase(local) {
           payload.classical_rating = newRating;
           payload.classical_peak_rating = Math.max(newRating, globalPlayer?.classical_peak_rating || 0, p.ratingAtStart || 1600);
         }
-        console.log(`[Sync] Updating ${p.name} — category: ${cat}, ratingAtStart: ${p.ratingAtStart}, newRating: ${newRating}, payload:`, JSON.stringify(payload));
         await api.updatePlayerStats(p.id, payload);
       } catch (e) {
         console.warn('[Sync] Player update failed for', p.name, e.message);
