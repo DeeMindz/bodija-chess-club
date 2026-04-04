@@ -147,6 +147,36 @@ export async function fetchGameResultsForPlayers(playerIds) {
     return data || [];
 }
 
+// Optimized: compute W/L/D/total counts server-side for a list of players.
+// Returns { [playerId]: { wins, draws, losses, games_played } }
+export async function fetchPlayerGameStats(playerIds) {
+    guard();
+    if (!playerIds || playerIds.length === 0) return {};
+    const { data, error } = await supabase
+        .from('games')
+        .select('white_player_id, black_player_id, result')
+        .or(playerIds.map(id => `white_player_id.eq.${id},black_player_id.eq.${id}`).join(','));
+    if (error) throw error;
+    const rows = data || [];
+    const stats = {};
+    for (const id of playerIds) {
+        const myGames = rows.filter(g => g.white_player_id === id || g.black_player_id === id);
+        stats[id] = {
+            wins: myGames.filter(g =>
+                (g.white_player_id === id && g.result === '1-0') ||
+                (g.black_player_id === id && g.result === '0-1')
+            ).length,
+            draws: myGames.filter(g => g.result === '1/2-1/2').length,
+            losses: myGames.filter(g =>
+                (g.white_player_id === id && g.result === '0-1') ||
+                (g.black_player_id === id && g.result === '1-0')
+            ).length,
+            games_played: myGames.length
+        };
+    }
+    return stats;
+}
+
 export async function fetchH2HGames(p1id, p2id) {
     guard();
     const { data, error } = await supabase

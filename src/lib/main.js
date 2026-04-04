@@ -5370,21 +5370,18 @@ async function _syncTournamentToSupabase(local) {
     // or casual games will be wiped every time a tournament is finished.
     showLoadingModal('Step 7/8: Updating player ratings...');
     const playerIds = local.players.map(p => p.id);
-    const allGames = await api.fetchGameResultsForPlayers(playerIds);
+    const playerGameStats = await api.fetchPlayerGameStats(playerIds);
     for (const p of local.players) {
       const newRating = p.currentRating || p.ratingAtStart || 1600;
-      const myGames = allGames.filter(g => g.white_player_id === p.id || g.black_player_id === p.id);
-      const globalWins = myGames.filter(g => g.white_player_id === p.id && g.result === '1-0' || g.black_player_id === p.id && g.result === '0-1').length;
-      const globalDraws = myGames.filter(g => g.result === '1/2-1/2').length;
-      const globalLosses = myGames.filter(g => g.white_player_id === p.id && g.result === '0-1' || g.black_player_id === p.id && g.result === '1-0').length;
+      const gStats = playerGameStats[p.id] || { wins: 0, draws: 0, losses: 0, games_played: 0 };
       const globalPlayer = store.players.find(x => x.id === p.id);
       const peakRating = Math.max(newRating, globalPlayer?.peakRating || 0, p.ratingAtStart || 1600);
       try {
         const payload = {
-          wins: globalWins,
-          draws: globalDraws,
-          losses: globalLosses,
-          games_played: myGames.length
+          wins: gStats.wins,
+          draws: gStats.draws,
+          losses: gStats.losses,
+          games_played: gStats.games_played
         };
         const cat = local.category || 'rapid';
         if (cat === 'rapid') {
