@@ -1948,9 +1948,9 @@ function renderPodium(cat) {
 
 // =================== PODIUM CARD DECK ===================
 const _deckCategories = [
-  { key: 'rapid',     label: '⏱ Rapid' },
-  { key: 'blitz',     label: '⚡ Blitz' },
-  { key: 'classical', label: '♟ Classical' },
+  { key: 'rapid',     label: '⏱ Rapid',      color: '#f0a500', bg: 'rgba(240,165,0,0.12)' },
+  { key: 'blitz',     label: '⚡ Blitz',      color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' },
+  { key: 'classical', label: '♟ Classical', color: '#10b981', bg: 'rgba(16,185,129,0.12)' }
 ];
 let _deckIndex = 0;
 let _deckTimer = null;
@@ -1962,10 +1962,39 @@ function _deckLabel(idx) {
 
 function _updateDeckLabels() {
   const front = document.getElementById('podiumFrontLabel');
-  const back  = document.getElementById('podiumBackLabel');
-  const nextCat = _deckLabel(_deckIndex + 1);
-  if (front) front.textContent = _deckLabel(_deckIndex).label;
-  if (back)  back.textContent  = nextCat.label;
+  const frontCard = document.getElementById('podiumCardFront');
+  
+  const peek1 = document.getElementById('podiumPeek1Label');
+  const peek1Card = document.getElementById('podiumPeek1');
+
+  const peek2 = document.getElementById('podiumPeek2Label');
+  const peek2Card = document.getElementById('podiumPeek2');
+
+  const cat0 = _deckLabel(_deckIndex);
+  const cat1 = _deckLabel(_deckIndex + 1);
+  const cat2 = _deckLabel(_deckIndex + 2);
+
+  // Front card
+  if (front) {
+    front.textContent = cat0.label;
+    front.style.color = cat0.color;
+    front.style.background = cat0.bg;
+  }
+  if (frontCard) frontCard.style.borderTopColor = cat0.color;
+
+  // Middle peek (1 layer behind)
+  if (peek1) {
+    peek1.textContent = cat1.label;
+    peek1.style.color = cat1.color;
+  }
+  if (peek1Card) peek1Card.style.borderTopColor = cat1.color;
+
+  // Deepest peek (2 layers behind)
+  if (peek2) {
+    peek2.textContent = cat2.label;
+    peek2.style.color = cat2.color;
+  }
+  if (peek2Card) peek2Card.style.borderTopColor = cat2.color;
 }
 
 function _advanceDeck() {

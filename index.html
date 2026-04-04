@@ -200,27 +200,41 @@
             </div>
             <div class="page-content">
                 <div class="dashboard-grid">
-                    <!-- Podium Card with Shadow-card layer behind it -->
-                    <div style="position: relative; padding-bottom: 12px;">
-                        <!-- Shadow / peek card behind (next category) -->
-                        <div id="podiumCardBack" style="
-                            position: absolute;
-                            bottom: 0; left: 6px; right: 6px;
-                            background: var(--bg-tertiary);
+                    <!-- Podium 3-card layered deck: depth visible at TOP, flat at bottom -->
+                    <div style="position: relative; padding-top: 26px;">
+
+                        <!-- Deepest card (card 3) — narrowest, peeks most at top -->
+                        <div id="podiumPeek2" style="
+                            position: absolute; top: 0; bottom: 0;
+                            left: 14px; right: 14px;
+                            background: var(--bg-secondary);
                             border-radius: 18px;
-                            border: 1px solid var(--border);
-                            height: 48px;
-                            z-index: 0;
-                            display: flex;
-                            align-items: center;
-                            justify-content: flex-end;
-                            padding: 0 16px;
+                            border-top: 3px solid #10b981;
+                            z-index: 1;
+                            display: flex; align-items: flex-start; justify-content: flex-end;
+                            padding: 7px 14px 0;
                         ">
-                            <span id="podiumBackLabel" style="font-size: 11px; font-weight: 700; color: var(--text-secondary); opacity: 0.7;"></span>
+                            <span id="podiumPeek2Label" style="font-size: 10px; font-weight: 700; color: #10b981; opacity: 0.85;"></span>
                         </div>
-                        <!-- Front card (the real podium-container) -->
+
+                        <!-- Middle card (card 2) — slightly narrower, peeks in between -->
+                        <div id="podiumPeek1" style="
+                            position: absolute; top: 12px; bottom: 0;
+                            left: 7px; right: 7px;
+                            background: var(--bg-secondary);
+                            border-radius: 18px;
+                            border-top: 3px solid #3b82f6;
+                            z-index: 2;
+                            display: flex; align-items: flex-start; justify-content: flex-end;
+                            padding: 7px 14px 0;
+                        ">
+                            <span id="podiumPeek1Label" style="font-size: 10px; font-weight: 700; color: #3b82f6; opacity: 0.85;"></span>
+                        </div>
+
+                        <!-- Front card: full-width, the active podium-container -->
                         <div id="podiumCardFront" class="podium-container" style="
-                            position: relative; z-index: 1;
+                            position: relative; z-index: 3;
+                            border-top: 3px solid #f0a500;
                             cursor: pointer;
                             user-select: none;
                             -webkit-tap-highlight-color: transparent;
@@ -228,14 +242,15 @@
                         ">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                 <h3 class="podium-title" style="margin-bottom: 0;">🏆 Top Players</h3>
-                                <span id="podiumFrontLabel" style="font-size: 11px; font-weight: 700; color: var(--accent-gold); padding: 3px 10px; background: rgba(240,165,0,0.12); border-radius: 20px;"></span>
+                                <span id="podiumFrontLabel" style="font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;"></span>
                             </div>
                             <div class="podium" id="podium">
-                                <!-- Podium will be rendered here -->
+                                <!-- Podium rendered here -->
                             </div>
                         </div>
                     </div>
-                    <!-- /podium card -->
+                    <!-- /podium deck -->
+
 
                     <div class="stats-container">
                         <h3 class="stats-title">Club Statistics</h3>
