@@ -2465,10 +2465,10 @@ async function renderH2HContent(p1id, p2id) {
     const rawData = await api.fetchH2HGames(p1id, p2id);
     let h2hGames = rawData.map(mapGameFromDB).filter(g => Boolean(g));
 
-    // Classify each game
+    // Classify each game using explicit category over legacy time_control guessing
     h2hGames = h2hGames.map(g => ({
       ...g,
-      tc: getGameTimeControl(g)
+      tc: g.category || 'rapid'
     }));
 
   // Count by category for tab badges
@@ -2476,7 +2476,7 @@ async function renderH2HContent(p1id, p2id) {
     all: h2hGames.length,
     rapid: 0,
     blitz: 0,
-    bullet: 0
+    classical: 0
   };
   h2hGames.forEach(g => {
     if (counts[g.tc] !== undefined) counts[g.tc]++;
@@ -2516,9 +2516,9 @@ async function renderH2HContent(p1id, p2id) {
     label: 'Blitz',
     icon: '⚡'
   }, {
-    key: 'bullet',
-    label: 'Bullet',
-    icon: '●'
+    key: 'classical',
+    label: 'Classical',
+    icon: '♟'
   }];
   if (container) container.innerHTML = `
         <div style="padding: 20px;">
