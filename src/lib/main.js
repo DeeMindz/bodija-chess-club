@@ -3249,7 +3249,7 @@ function showTournamentStartPreview() {
   }
 
   // Format the display values
-  const formatDisplay = format === 'swiss' ? 'Swiss System' : format === 'roundrobin' ? `Round Robin (${isDouble ? 'Double' : 'Single'})` : 'Knockout';
+  const formatDisplay = normFmt === 'swiss' ? 'Swiss System' : normFmt === 'roundrobin' ? `Round Robin (${isDouble ? 'Double' : 'Single'})` : 'Knockout';
 
   // Update preview modal content
   const nameEl = document.getElementById('startPreviewTournamentName');

@@ -17,7 +17,6 @@ export async function fetchPlayers() {
     const { data, error } = await supabase
         .from('players')
         .select('id, player_id, name, bodija_rating, peak_rating, rapid_rating, rapid_peak_rating, blitz_rating, blitz_peak_rating, classical_rating, classical_peak_rating, games_played, wins, draws, losses, status, is_guest, photo, email, phone')
-        .eq('is_guest', false)
         .order('bodija_rating', { ascending: false });
     if (error) throw error;
     return data || [];
